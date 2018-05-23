@@ -14,7 +14,7 @@
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w",
-    "test": "mocha --exit && bundlesize",
+    "test": "nyc mocha --exit && && nyc report --reporter=text-lcov | coveralls && bundlesize",
     "pretest": "npm run build"
   },
   "repository": {
@@ -49,6 +49,7 @@
     "eslint-plugin-promise": "^3.7.0",
     "eslint-plugin-standard": "^3.1.0",
     "mocha": "^5.2.0",
+    "nyc": "^11.8.0",
     "rollup": "^0.59.2",
     "rollup-plugin-babel": "^3.0.4",
     "rollup-plugin-commonjs": "^9.1.3",
