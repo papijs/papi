@@ -6,25 +6,6 @@ import eslint from 'rollup-plugin-eslint';
 import pkg from './package.json';
 
 export default [
-    // browser-friendly UMD build
-    {
-        input: 'src/index.js',
-        output: {
-            file: pkg.browser,
-            format: 'umd',
-            name: 'mapi',
-            sourceMap: true
-        },
-        plugins: [
-            eslint(),
-            json(),
-            resolve({ jsnext: true, preferBuiltins: true, browser: true }), // so Rollup can find `axios`
-            commonjs(), // so Rollup can convert `axios` to an ES module
-            babel({
-                exclude: ['node_modules/**']
-            })
-        ]
-    },
 
     // CommonJS (for Node) and ES module (for bundlers) build.
     // (We could have three entries in the configuration array
@@ -35,8 +16,7 @@ export default [
         input: 'src/index.js',
         external: ['axios'],
         output: [
-            { file: pkg.main, format: 'cjs' },
-            { file: pkg.module, format: 'es' }
+            { file: pkg.main, format: 'cjs' }
         ],
         plugins: [
             eslint(),
