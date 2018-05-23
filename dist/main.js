@@ -4,21 +4,23 @@ function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'defau
 
 var axios = _interopDefault(require('axios'));
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+var _extends = Object.assign || function (target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i];
 
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+    for (var key in source) {
+      if (Object.prototype.hasOwnProperty.call(source, key)) {
+        target[key] = source[key];
+      }
+    }
+  }
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+  return target;
+};
 
-function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var MapiEndpoint = function () {
-  function MapiEndpoint(args) {
-    _classCallCheck(this, MapiEndpoint);
-
-    var defaults = {
+const MapiEndpoint = class {
+  constructor(args) {
+    const defaults$$1 = {
       method: 'GET',
       endpoint: '',
       hasParams: false,
@@ -27,7 +29,7 @@ var MapiEndpoint = function () {
       requiresAuth: false
     };
 
-    var options = _extends({}, defaults, args);
+    const options = _extends({}, defaults$$1, args);
 
     // There is a param included in the endpoint but the params haven't been set up, so we'll interpret the endpoint
     // and set up the params as best we can...
@@ -36,8 +38,8 @@ var MapiEndpoint = function () {
       options.hasParams = true;
 
       // This regex is used to match the param pattern ':param?'
-      var regex = /:[a-zA-Z_?]+/gm;
-      var m = void 0;
+      const regex = /:[a-zA-Z_?]+/gm;
+      let m;
       while ((m = regex.exec(options.endpoint)) !== null) {
         // This is necessary to avoid infinite loops with zero-width matches
         if (m.index === regex.lastIndex) {
@@ -45,9 +47,9 @@ var MapiEndpoint = function () {
         }
 
         // The result can be accessed through the `m`-variable.
-        m.forEach(function (match, groupIndex) {
+        m.forEach((match, groupIndex) => {
           // Remove the leading :
-          var param = {
+          const param = {
             slug: match.slice(1, match.length),
             pattern: match,
             required: true
@@ -71,125 +73,93 @@ var MapiEndpoint = function () {
     this.requiresAuth = options.requiresAuth;
   }
 
-  _createClass(MapiEndpoint, [{
-    key: 'buildRequestOptions',
-    value: function buildRequestOptions() {
-      var options = {};
+  buildRequestOptions() {
+    const options = {};
 
-      if (this.requiresAuth) ;
+    if (this.requiresAuth) ;
 
-      return options;
-    }
-  }, {
-    key: 'getEndpoint',
-    value: function getEndpoint(data) {
-      var endpoint = this.endpoint;
-      if (this.hasParams) {
-        if (this.params.length === 1) {
-          if (data && typeof data === 'string') {
-            endpoint = endpoint.replace(this.params[0].pattern, data);
-          } else if (!this.params[0].required) {
-            endpoint = endpoint.replace(this.params[0].pattern, '');
+    return options;
+  }
+
+  getEndpoint(data) {
+    let endpoint = this.endpoint;
+    if (this.hasParams) {
+      if (this.params.length === 1) {
+        if (data && typeof data === 'string') {
+          endpoint = endpoint.replace(this.params[0].pattern, data);
+        } else if (!this.params[0].required) {
+          endpoint = endpoint.replace(this.params[0].pattern, '');
+        } else {
+          throw new Error('Parameter required');
+        }
+      } else {
+        for (const param of this.params) {
+          if (data && data[param.slug]) {
+            endpoint = endpoint.replace(param.pattern, data[param.slug]);
+          } else if (!param.required) {
+            endpoint = endpoint.replace(param.pattern, '');
           } else {
             throw new Error('Parameter required');
           }
-        } else {
-          var _iteratorNormalCompletion = true;
-          var _didIteratorError = false;
-          var _iteratorError = undefined;
-
-          try {
-            for (var _iterator = this.params[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-              var param = _step.value;
-
-              if (data && data[param.slug]) {
-                endpoint = endpoint.replace(param.pattern, data[param.slug]);
-              } else if (!param.required) {
-                endpoint = endpoint.replace(param.pattern, '');
-              } else {
-                throw new Error('Parameter required');
-              }
-            }
-          } catch (err) {
-            _didIteratorError = true;
-            _iteratorError = err;
-          } finally {
-            try {
-              if (!_iteratorNormalCompletion && _iterator.return) {
-                _iterator.return();
-              }
-            } finally {
-              if (_didIteratorError) {
-                throw _iteratorError;
-              }
-            }
-          }
         }
       }
-
-      return endpoint;
     }
-  }, {
-    key: 'call',
-    value: function call(data) {
-      var options = this.buildRequestOptions();
 
-      switch (this.method) {
-        case 'GET':
-          return this.get(data, options);
+    return endpoint;
+  }
 
-        case 'POST':
-          return this.post(data, options);
+  call(data) {
+    const options = this.buildRequestOptions();
 
-        default:
-          throw new Error('Method not supported');
-      }
+    switch (this.method) {
+      case 'GET':
+        return this.get(data, options);
+
+      case 'POST':
+        return this.post(data, options);
+
+      default:
+        throw new Error('Method not supported');
     }
-  }, {
-    key: 'get',
-    value: function get(data, options) {
-      if (typeof data === 'number') {
-        data = data.toString();
-      }
-      var endpoint = this.getEndpoint(data);
+  }
 
-      return axios.get(endpoint, options);
+  get(data, options) {
+    if (typeof data === 'number') {
+      data = data.toString();
     }
-  }, {
-    key: 'post',
-    value: function post(data, options) {
-      if (this.hasBody && !data) {
-        throw new Error('API call requires body');
-      }
+    const endpoint = this.getEndpoint(data);
 
-      if (this.hasBody && !data.body) {
-        data = {
-          body: data
-        };
-      }
+    return axios.get(endpoint, options);
+  }
 
-      var body = this.hasBody ? data.body : null;
-
-      var endpoint = this.getEndpoint(data);
-
-      return axios.post(endpoint, body, options);
+  post(data, options) {
+    if (this.hasBody && !data) {
+      throw new Error('API call requires body');
     }
-  }]);
 
-  return MapiEndpoint;
-}();
+    if (this.hasBody && !data.body) {
+      data = {
+        body: data
+      };
+    }
 
-var Service = function () {
-  function Service(args) {
-    _classCallCheck(this, Service);
+    const body = this.hasBody ? data.body : null;
 
-    var defaults = {
+    const endpoint = this.getEndpoint(data);
+
+    return axios.post(endpoint, body, options);
+  }
+};
+
+const MapiService = class {
+  constructor(args) {
+    const defaults$$1 = {
       base: '/',
       defaultEndpoints: true,
       hasHealthCheck: true,
       healthCheck: {
         method: 'GET',
-        endpoint: '/info',
+        endpoint: '/health',
         hasBody: false,
         requiresAuth: false,
         alias: 'health'
@@ -227,13 +197,13 @@ var Service = function () {
       services: []
     };
 
-    var options = _extends({}, defaults, args);
+    const options = _extends({}, defaults$$1, args);
 
     if (options.defaultEndpoints) {
-      options.endpoints = [].concat(_toConsumableArray(defaults.endpoints), _toConsumableArray(args.endpoints));
+      options.endpoints = [...defaults$$1.endpoints, ...args.endpoints];
     }
 
-    this.base = options.base;
+    this._base = options.base;
     this.endpoints = [];
 
     this.registerEndpoints(options.endpoints);
@@ -244,145 +214,114 @@ var Service = function () {
     }
   }
 
-  _createClass(Service, [{
-    key: 'registerEndpoints',
-    value: function registerEndpoints(endpoints) {
-      var _this = this;
+  registerEndpoints(endpoints) {
+    for (const i in endpoints) {
+      let index = this.endpoints.push(new MapiEndpoint(_extends({}, endpoints[i], { endpoint: this._base + endpoints[i].endpoint }))) - 1;
 
-      var _loop = function _loop(i) {
-        var index = _this.endpoints.push(new MapiEndpoint(_extends({}, endpoints[i], { endpoint: _this.base + endpoints[i].endpoint }))) - 1;
-
-        if (endpoints[i].alias && endpoints[i].alias !== '') {
-          _this[endpoints[i].alias] = function (data) {
-            return _this.endpoints[index].call(data);
-          };
-        }
-      };
-
-      for (var i in endpoints) {
-        _loop(i);
+      if (endpoints[i].alias && endpoints[i].alias !== '') {
+        this[endpoints[i].alias] = data => this.endpoints[index].call(data);
       }
     }
-  }, {
-    key: 'registerSubServices',
-    value: function registerSubServices(services) {
-      for (var i in services) {
-        if (services.hasOwnProperty(i)) {
-          var service = services[i];
+  }
 
-          if (!service.name && !service.base) {
-            throw new Error('Cannot register service.');
-          }
+  registerSubServices(services) {
+    for (const i in services) {
+      if (services.hasOwnProperty(i)) {
+        const service = services[i];
 
-          if (!service.base) {
-            service.base = '/' + service.name;
-          }
+        if (!service.name && !service.base) {
+          throw new Error('Cannot register service.');
+        }
 
-          if (!service.base.startsWith('/')) {
-            service.base = '/' + service.base;
-          }
+        if (!service.base) {
+          service.base = '/' + service.name;
+        }
 
-          service.endpoints = service.endpoints || [];
-          service.services = service.services || [];
+        if (!service.base.startsWith('/')) {
+          service.base = '/' + service.base;
+        }
 
-          service.base = this.base + service.base;
+        service.endpoints = service.endpoints || [];
+        service.services = service.services || [];
 
-          this[service.name] = new Service(service);
+        service.base = this._base + service.base;
 
-          if (service.methods && _typeof(service.methods) === 'object') {
-            for (var methodName in service.methods) {
-              if (service.methods.hasOwnProperty(methodName)) {
-                var method = service.methods[methodName];
+        this[service.name] = new MapiService(service);
 
-                this[service.name][methodName] = method;
-              }
+        if (service.methods && typeof service.methods === 'object') {
+          for (const methodName in service.methods) {
+            if (service.methods.hasOwnProperty(methodName)) {
+              const method = service.methods[methodName];
+
+              this[service.name][methodName] = method;
             }
-          }
-        }
-      }
-    }
-  }, {
-    key: 'registerHealthCheckEndpoint',
-    value: function registerHealthCheckEndpoint(healthCheck) {
-      this.registerEndpoints([healthCheck]);
-    }
-  }]);
-
-  return Service;
-}();
-
-var Api = function () {
-  function Api(args) {
-    _classCallCheck(this, Api);
-
-    this.base = args.base;
-
-    if (args.services && Array.isArray(args.services)) {
-      var _iteratorNormalCompletion2 = true;
-      var _didIteratorError2 = false;
-      var _iteratorError2 = undefined;
-
-      try {
-        for (var _iterator2 = args.services[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-          var service = _step2.value;
-
-          this.registerService(service);
-        }
-      } catch (err) {
-        _didIteratorError2 = true;
-        _iteratorError2 = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion2 && _iterator2.return) {
-            _iterator2.return();
-          }
-        } finally {
-          if (_didIteratorError2) {
-            throw _iteratorError2;
           }
         }
       }
     }
   }
 
-  _createClass(Api, [{
-    key: 'registerService',
-    value: function registerService(args) {
-      if (!args.name && !args.base) {
-        return false;
+  registerHealthCheckEndpoint(healthCheck) {
+    this.registerEndpoints([healthCheck]);
+  }
+};
+
+const Mapi = class {
+  constructor(args) {
+    if (!args) {
+      throw new Error('Missing API configuration.');
+    }
+
+    if (!args.base) {
+      throw new Error('Missing API Base URL.');
+    }
+    this._base = args.base;
+
+    if (args.services && Array.isArray(args.services)) {
+      for (const service of args.services) {
+        this.registerService(service);
       }
+    }
+  }
 
-      if (!args.name) {
-        args.name = args.base.replace(/[^a-z_]/gi, '');
-      } else if (!args.base) {
-        args.base = args.name;
-      }
+  registerService(args) {
+    if (!args) {
+      throw new Error('Missing service configuration.');
+    }
+    if (!args.name) {
+      throw new Error('Missing service name.');
+    }
 
-      if (!args.base.startsWith('/')) {
-        args.base = '/' + args.base;
-      }
+    if (!args.name) {
+      args.name = args.base.replace(/[^a-z_]/gi, '');
+    } else if (!args.base) {
+      args.base = args.name;
+    }
 
-      args.endpoints = args.endpoints || [];
-      args.services = args.services || [];
-      args.base = this.base + args.base;
+    if (!args.base.startsWith('/')) {
+      args.base = '/' + args.base;
+    }
 
-      if (!this[args.name]) {
-        this[args.name] = new Service(args);
-      }
+    args.endpoints = args.endpoints || [];
+    args.services = args.services || [];
+    args.base = this._base + args.base;
 
-      if (args.methods && _typeof(args.methods) === 'object') {
-        for (var methodName in args.methods) {
-          if (args.methods.hasOwnProperty(methodName)) {
-            var method = args.methods[methodName];
+    if (!this[args.name]) {
+      this[args.name] = new MapiService(args);
+    } else {
+      throw new Error(`Service ${args.name} is already registered.`);
+    }
 
-            this[args.name][methodName] = method;
-          }
+    if (args.methods && typeof args.methods === 'object') {
+      for (const methodName in args.methods) {
+        if (args.methods.hasOwnProperty(methodName)) {
+          const method = args.methods[methodName];
+
+          this[args.name][methodName] = method;
         }
       }
     }
-  }]);
+  }
+};
 
-  return Api;
-}();
-
-module.exports = Api;
+module.exports = Mapi;
