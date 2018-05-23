@@ -1,10 +1,15 @@
 {
-  "name": "mapi",
+  "name": "@andrewfarinella/mapi",
   "version": "0.1.0",
   "description": "A simple RESTful API interface",
-  "main": "index.js",
+  "main": "dist/main.js",
+  "module": "dist/main.js",
+  "browser": "dist/main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "rollup -c",
+    "dev": "rollup -c -w",
+    "test": "bundlesize",
+    "pretest": "npm run build"
   },
   "repository": {
     "type": "git",
@@ -20,5 +25,25 @@
   "bugs": {
     "url": "https://github.com/andrewfarinella/mapi/issues"
   },
-  "homepage": "https://github.com/andrewfarinella/mapi#readme"
+  "homepage": "https://github.com/andrewfarinella/mapi#readme",
+  "dependencies": {
+    "axios": "^0.18.0"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.3",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "bundlesize": "^0.17.0",
+    "eslint-config-standard": "^11.0.0",
+    "eslint-plugin-import": "^2.12.0",
+    "eslint-plugin-node": "^6.0.1",
+    "eslint-plugin-promise": "^3.7.0",
+    "eslint-plugin-standard": "^3.1.0",
+    "rollup": "^0.59.2",
+    "rollup-plugin-babel": "^3.0.4",
+    "rollup-plugin-commonjs": "^9.1.3",
+    "rollup-plugin-eslint": "^4.0.0",
+    "rollup-plugin-json": "^3.0.0",
+    "rollup-plugin-node-resolve": "^3.3.0"
+  }
 }
