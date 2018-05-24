@@ -17,6 +17,7 @@
     "publish": "npm publish --access=public",
     "test": "nyc mocha --exit && nyc report --reporter=text-lcov | coveralls && bundlesize",
     "test:default": "npm run build && nyc mocha --exit && bundlesize",
+    "test:watch": "mocha -w",
     "pretest": "npm run build"
   },
   "repository": {
