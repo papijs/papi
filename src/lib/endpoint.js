@@ -46,7 +46,7 @@ const MapiEndpoint = class {
     }
 
     if (!options.endpoint.includes(':') && options.hasParams) {
-      throw new Error(`Endpoint ${options.alias} is expecting parameters but couldn't find any in the endpoint uri`)
+      throw new Error(`Endpoint ${options.alias} is expecting parameters but couldn't find any in the endpoint uri or arguments.`)
     }
 
     if (options.hasParams && typeof options.params[0] === 'string') {
@@ -62,7 +62,7 @@ const MapiEndpoint = class {
     }
 
     this.method = options.method
-    this.endpoint = options.endpoint
+    this.endpoint = options.base + options.endpoint
     this.hasParams = options.hasParams
     this.params = options.params
     this.hasBody = options.hasBody
@@ -83,22 +83,36 @@ const MapiEndpoint = class {
   getEndpoint (data) {
     let endpoint = this.endpoint
     if (this.hasParams) {
-      if (this.params.length === 1) {
-        if (data && typeof data === 'string') {
-          endpoint = endpoint.replace(this.params[0].pattern, data)
-        } else if (!this.params[0].required) {
-          endpoint = endpoint.replace(this.params[0].pattern, '')
+      if (data) {
+        if (typeof data === 'number') {
+          data = data.toString()
+        }
+
+        if (typeof data === 'string') {
+          if (this.params.length === 1) {
+            endpoint = endpoint.replace(this.params[0].pattern, data)
+          } else {
+            throw new Error(`Endpoint ${this.alias} tried to create an endpoint uri but is missing parameters.`)
+          }
+        } else if (typeof data === 'object') {
+          for (const param of this.params) {
+            if (data && data[param.slug]) {
+              endpoint = endpoint.replace(param.pattern, data[param.slug])
+            } else if (!param.required) {
+              endpoint = endpoint.replace(param.pattern, '')
+            } else {
+              throw new Error(`Endpoint ${this.alias} tried to create an endpoint uri but couldn't find the necessary data for the parameter ${param.slug}.`)
+            }
+          }
         } else {
-          throw new Error('Parameter required')
+          throw new Error(`Endpoint ${this.alias} tried to create an endpoint uri but can't understand the data it was passed.`)
         }
       } else {
         for (const param of this.params) {
-          if (data && data[param.slug]) {
-            endpoint = endpoint.replace(param.pattern, data[param.slug])
-          } else if (!param.required) {
-            endpoint = endpoint.replace(param.pattern, '')
+          if (param.required) {
+            throw new Error(`Endpoint ${this.alias} tried to create an endpoint uri but is missing arguments.`)
           } else {
-            throw new Error('Parameter required')
+            endpoint = endpoint.replace(param.pattern, '')
           }
         }
       }
@@ -107,23 +121,17 @@ const MapiEndpoint = class {
     return endpoint
   }
 
-  call (data) {
+  call (...args) {
     const options = this.buildRequestOptions()
 
-    if (typeof data === 'number') {
-      data = data.toString()
+    const params = (this.hasParams) ? args[0] : null
+    const body = (this.hasBody) ? (this.hasParams) ? args[1] : args[0] : null
+
+    if (this.hasBody && !body) {
+      throw new Error(`Endpoint ${this.alias} is expecting a request body but couldn't find any.`)
     }
 
-    if (this.hasBody && !data) {
-      throw new Error(`MapiEndpoint ${this.alias} is expecting a request body but couldn't find any.`)
-    }
-
-    if (this.hasBody && !data.body) {
-      data.body = data
-    }
-
-    const endpoint = this.getEndpoint(data)
-    const body = (this.hasBody) ? data.body : null
+    const endpoint = this.getEndpoint(params)
 
     switch (this.method) {
       case 'GET':
@@ -148,7 +156,7 @@ const MapiEndpoint = class {
         return axios.patch(endpoint, body, options)
 
       default:
-        throw new Error(`Method ${this.method} not supported in MapiEndpoint ${this.alias}`)
+        throw new Error(`Endpoint ${this.alias}'s method ${this.method} is not supported.`)
     }
   }
 }
