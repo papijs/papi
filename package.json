@@ -11,12 +11,19 @@
       "maxSize": "5 kB"
     }
   ],
+  "nyc": {
+    "exclude": [
+      "dist",
+      "test"
+    ]
+  },
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w",
     "publish": "npm publish --access=public",
     "test": "nyc mocha --exit && nyc report --reporter=text-lcov | coveralls && bundlesize",
-    "test:default": "npm run build && nyc mocha --exit && bundlesize",
+    "test:default": "NODE_ENV=test npm run build && nyc mocha --exit",
+    "test:coverage": "nyc --reporter=lcov  --reporter=text-lcov npm run test:default",
     "test:watch": "mocha -w",
     "pretest": "npm run build"
   },
@@ -41,6 +48,7 @@
   "devDependencies": {
     "babel-core": "^6.26.3",
     "babel-plugin-external-helpers": "^6.22.0",
+    "babel-plugin-istanbul": "^4.1.6",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-env": "^1.7.0",

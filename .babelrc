@@ -9,6 +9,11 @@
         }
       ]
     ],
+    "env": {
+      "test": {
+        "plugins": ["istanbul"]
+      }
+    },
     "plugins": [
       "external-helpers",
       "transform-object-rest-spread"
