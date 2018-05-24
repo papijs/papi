@@ -16,10 +16,10 @@ const MapiEndpoint = class {
     const options = {...defaults, ...args}
 
     if (validMethods.indexOf(options.method.toUpperCase()) === -1) {
-      throw new Error('Invalid METHOD provided')
+      throw new Error(`Endpoint "${options.alias}" method ${options.method} is not supported.`)
     }
     // First: Handle User Provided Params
-    if (options.params.length) {
+    if (options.params.length && options.params.length > 0) {
       // Auto bulid param objects based on a string-only array
       // e.g. args.params = ['id', 'start-date', 'end-date']
       if (typeof options.params[0] === 'string') {
@@ -40,18 +40,19 @@ const MapiEndpoint = class {
       // Params were not passed, but we will attempt to parse unless told in arguments they don't exist
       // This regex is used to match the param pattern ':param?'
       const paramRegex = /:[0-9A-z_-]+\?{0,1}/gm
-      const m = paramRegex.exec(options.endpoint) || []
+      let m
+      while ((m = paramRegex.exec(options.endpoint)) !== null) {
+        m.forEach(pattern => {
+          const slug = pattern.replace(/[:?]/g, '')
+          const required = !pattern.includes('?')
 
-      m.forEach(pattern => {
-        const slug = pattern.replace(/[:?]/g, '')
-        const required = !pattern.includes('?')
-
-        options.params.push({
-          slug,
-          pattern,
-          required
+          options.params.push({
+            slug,
+            pattern,
+            required
+          })
         })
-      })
+      }
     }
 
     // Error if params are expected but NOT found
