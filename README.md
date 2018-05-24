@@ -1,27 +1,28 @@
-# mapi
-[![Build Status](https://travis-ci.org/andrewfarinella/mapi.svg?branch=master)](https://travis-ci.org/andrewfarinella/mapi) [![Coverage Status](https://coveralls.io/repos/github/andrewfarinella/mapi/badge.svg?branch=master)](https://coveralls.io/github/andrewfarinella/mapi?branch=master) [![npm version](https://badge.fury.io/js/%40andrewfarinella%2Fmapi.svg)](https://badge.fury.io/js/%40andrewfarinella%2Fmapi)
+# ![papi](https://s3-us-west-2.amazonaws.com/s.cdpn.io/138442/papi.png) papi
+[![Build Status](https://travis-ci.org/papijs/papi.svg?branch=master)](https://travis-ci.org/papijs/papi) [![Coverage Status](https://coveralls.io/repos/github/papijs/papi/badge.svg?branch=master)](https://coveralls.io/github/papijs/papi?branch=master) [![npm version](https://badge.fury.io/js/%40papijs%2Fpapi.svg)](https://badge.fury.io/js/%40papijs%2Fpapi) [![dependencies Status](https://david-dm.org/papijs/papi/status.svg)](https://david-dm.org/papijs/papi)
 
----
-A simple RESTful API interface.
+> A simple RESTful API interface.
+
+Papi (pronounced `pap-e`) offers a easy-to-use way of interfacing with REST APIs in JS using promises. It is currently built on top of the http client [axios](https://github.com/axios/axios). All promises returned are straight from axios, so it is recommended you check out their docs if you have any questions about the structure of their promises.
 
 ## Install
 
 NPM
 ```bash
-$ npm install @andrewfarinella/mapi --save
+$ npm install @papijs/papi --save
 ```
 
 Yarn
 ```bash
-$ yarn add @andrewfarinella/mapi
+$ yarn add @papijs/papi
 ```
 
 ## Example
 
 ```js
-import Mapi from '@andrewfarinella/mapi'
+import Papi from '@papijs/papi'
 
-const api = mapi({
+const api = papi({
     base: 'http://localhost:8080',
     services: [ 'posts' ]
 });
@@ -39,17 +40,17 @@ api.posts.get(1)
 ### Import
 
 ```js
-import mapi from '@andrewfarinella/mapi'
+import papi from '@papijs/papi'
 
 // or
 
-mapi = require('@andrewfarinella/mapi')
+papi = require('@papijs/papi')
 ```
 
-### mapi setup
+### papi setup
 
 ```js
-const api = mapi({
+const api = papi({
     base: 'http://localhost:8080',
     headers: [
         ['Authorization', 'MyKeyHere']
@@ -64,11 +65,11 @@ const api = mapi({
 })
 ```
 ### Service setup
-Services can be registered either at setup or afterwards using the `mapi.registerService()` method.
+Services can be registered either at setup or afterwards using the `papi.registerService()` method.
 
 The only required property is `name`. If `base` is not supplied, the base will be generated based on the `name` property.
 ```js
-api = mapi({base: 'http://localhost:8080'})
+api = papi({base: 'http://localhost:8080'})
 
 api.registerService({
   name: 'posts',
@@ -131,7 +132,7 @@ Endpoints can be registered when a service is registered or by calling `service.
 While the only required field for endpoints is `alias`, the endpoint URL will not auto-generate based on the `alias` property, but instead will default to `'/'`. This may have unintended side-effects, so it's recommended that an `endpoint` property always be supplied as well.
 
 ```js
-api = mapi({base: 'http://localhost:8080', services: ['posts']})
+api = papi({base: 'http://localhost:8080', services: ['posts']})
 
 api.posts.registerEndpoint({
   method: 'GET',
@@ -149,7 +150,7 @@ api.posts.registerEndpoint({
 })
 ```
 
-If no parameters are listed but `hasParams` is set to true and there is at least one `:` in the endpoint, mapi will attempt to discover the parameters automatically. If a parameter is not required, it can be indicated by ending it with `?` such as `/:id?`.
+If no parameters are listed but `hasParams` is set to true and there is at least one `:` in the endpoint, papi will attempt to discover the parameters automatically. If a parameter is not required, it can be indicated by ending it with `?` such as `/:id?`.
 
 ### Making Calls
 When making a call to a registered endpoint, the number of arguments expected depends on the `hasParams` and `hasBody` properties.
@@ -189,3 +190,9 @@ api.posts.getComments({
   commentId: 3
 })
 ```
+
+## Changelog
+Changes are documented in [each release](https://github.com/papijs/papi/releases).
+
+## License
+MIT

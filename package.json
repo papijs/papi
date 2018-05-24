@@ -1,6 +1,6 @@
 {
-  "name": "@andrewfarinella/mapi",
-  "version": "0.2.2",
+  "name": "@papijs/papi",
+  "version": "0.3.0",
   "description": "A simple RESTful API interface",
   "main": "dist/main.js",
   "module": "dist/main.js",
@@ -31,7 +31,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/andrewfarinella/mapi.git"
+    "url": "git+https://github.com/papijs/papi.git"
   },
   "keywords": [
     "node",
@@ -41,9 +41,9 @@
   "author": "Andrew Farinella",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/andrewfarinella/mapi/issues"
+    "url": "https://github.com/papijs/papi/issues"
   },
-  "homepage": "https://github.com/andrewfarinella/mapi#readme",
+  "homepage": "https://github.com/papijs/papi#readme",
   "dependencies": {
     "axios": "^0.18.0"
   },

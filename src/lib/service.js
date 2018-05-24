@@ -1,6 +1,6 @@
-import MapiEndpoint from './endpoint'
+import PapiEndpoint from './endpoint'
 
-const MapiService = class {
+const PapiService = class {
   constructor (args) {
     const defaults = {
       base: '/',
@@ -87,7 +87,7 @@ const MapiService = class {
       throw new Error(`Service ${this._name} already has the ${endpoint.alias} endpoint defined.`)
     }
 
-    let index = this.endpoints.push(new MapiEndpoint({...endpoint, base: this._base})) - 1
+    let index = this.endpoints.push(new PapiEndpoint({...endpoint, base: this._base})) - 1
 
     this[endpoint.alias] = (params, body) => this.endpoints[index].call(params, body)
   }
@@ -128,7 +128,7 @@ const MapiService = class {
 
         service.base = this._base + service.base
 
-        this[service.name] = new MapiService(service)
+        this[service.name] = new PapiService(service)
 
         if (service.methods && typeof service.methods === 'object') {
           for (const methodName in service.methods) {
@@ -148,4 +148,4 @@ const MapiService = class {
   }
 }
 
-export default MapiService
+export default PapiService
