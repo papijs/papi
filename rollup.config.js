@@ -22,10 +22,10 @@ export default [
         plugins: [
             eslint(),
             json(),
+            resolve({ jsnext: true, preferBuiltins: true, browser: true }),
             babel({
               exclude: ['node_modules/**']
             }),
-            resolve({ jsnext: true, preferBuiltins: true, browser: true }),
             minify()
         ]
     }
