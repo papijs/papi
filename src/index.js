@@ -1,3 +1,5 @@
 import Mapi from './lib/mapi'
 
-export default Mapi
+export default (args) => {
+  return new Mapi(args)
+}
