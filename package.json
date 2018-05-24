@@ -14,7 +14,8 @@
   "nyc": {
     "exclude": [
       "dist",
-      "test"
+      "test",
+      "rollup.config.js"
     ]
   },
   "scripts": {
