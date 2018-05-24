@@ -10,7 +10,7 @@ let server;
 
 describe('Core Functionality', () => {
     beforeEach(() => {
-        api = new mapi({base: DEFAULT_BASE_URL});
+        api = mapi({base: DEFAULT_BASE_URL});
     });
 
     describe('New instance', () => {
@@ -20,8 +20,8 @@ describe('Core Functionality', () => {
             expect(api._base).to.equal(DEFAULT_BASE_URL);
             done();
         });
-        it('Creates a new instance with services', (done) => {
-            const apiWithServices = new mapi({
+        it('Creates a new instance with services as objects', (done) => {
+            const apiWithServices = mapi({
                 base: 'mybase',
                 services: [
                     {
@@ -49,17 +49,44 @@ describe('Core Functionality', () => {
 
             done();
         });
+        it('Creates a new instance with services as strings', (done) => {
+            const apiWithServices = mapi({
+                base: 'mybase',
+                services: [
+                   'custom'
+                ]
+            });
+
+            expect(apiWithServices).to.haveOwnProperty('_base');
+            expect(apiWithServices._base).to.equal('mybase');
+
+            expect(apiWithServices).to.haveOwnProperty('custom');
+
+            expect(apiWithServices.custom).to.haveOwnProperty('get');
+            expect(apiWithServices.custom.get).to.be.a('function');
+
+            expect(apiWithServices.custom).to.haveOwnProperty('create');
+            expect(apiWithServices.custom.create).to.be.a('function');
+
+            expect(apiWithServices.custom).to.haveOwnProperty('update');
+            expect(apiWithServices.custom.update).to.be.a('function');
+
+            expect(apiWithServices.custom).to.haveOwnProperty('delete');
+            expect(apiWithServices.custom.delete).to.be.a('function');
+
+            done();
+        });
 
         // Failures
         it('Fails when called without arguments', (done) => {
             expect(() => {
-                const newApi = new mapi();
+                const newApi = mapi();
             }).to.throw('Missing API configuration.');
             done();
         });
         it('Fails when called without base', (done) => {
             expect(() => {
-                const newApi = new mapi({});
+                const newApi = mapi({});
             }).to.throw('Missing API Base URL.');
             done();
         });
@@ -69,7 +96,7 @@ describe('Core Functionality', () => {
 
 describe('Services', () => {
     beforeEach(() => {
-        api = new mapi({base: DEFAULT_BASE_URL});
+        api = mapi({base: DEFAULT_BASE_URL});
     });
 
     describe('Registration', () => {
@@ -284,7 +311,7 @@ describe('Services', () => {
 
 describe('Endpoints', () => {
     beforeEach(() => {
-        api = new mapi({base: DEFAULT_BASE_URL});
+        api = mapi({base: DEFAULT_BASE_URL});
 
         api.registerService({ name: 'base' });
     });
