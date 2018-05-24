@@ -21,7 +21,7 @@ $ yarn add @andrewfarinella/mapi
 ```js
 import Mapi from '@andrewfarinella/mapi'
 
-const api = new Mapi({
+const api = mapi({
     base: 'http://localhost:8080',
     services: [ 'posts' ]
 });
