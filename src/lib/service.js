@@ -17,6 +17,7 @@ const MapiService = class {
         {
           method: 'GET',
           endpoint: '/:id?',
+          hasParams: true,
           hasBody: false,
           requiresAuth: true,
           alias: 'get'
@@ -33,9 +34,6 @@ const MapiService = class {
           method: 'PUT',
           endpoint: '/:id',
           hasParams: true,
-          params: [
-            'id'
-          ],
           hasBody: true,
           requiresAuth: true,
           alias: 'update'
@@ -44,9 +42,6 @@ const MapiService = class {
           method: 'DELETE',
           endpoint: '/:id',
           hasParams: true,
-          params: [
-            'id'
-          ],
           hasBody: false,
           requiresAuth: true,
           alias: 'delete'
@@ -67,6 +62,7 @@ const MapiService = class {
       ]
     }
 
+    this._name = options.name
     this._base = options.base
     this.endpoints = []
 
@@ -78,13 +74,35 @@ const MapiService = class {
     }
   }
 
-  registerEndpoints (endpoints) {
-    for (const i in endpoints) {
-      let index = this.endpoints.push(new MapiEndpoint({...endpoints[i], endpoint: this._base + endpoints[i].endpoint})) - 1
+  registerEndpoint (endpoint) {
+    if (!endpoint) {
+      throw new Error('MapiService.registerEndpoint is missing endpoint information.')
+    }
 
-      if (endpoints[i].alias && endpoints[i].alias !== '') {
-        this[endpoints[i].alias] = (data) => this.endpoints[index].call(data)
-      }
+    if (!endpoint.alias || endpoint.alias === '') {
+      throw new Error('MapiService.registerEndpoint requires an alias to set up a new endpoint.')
+    }
+
+    if (typeof this[endpoint.alias] !== 'undefined') {
+      throw new Error(`Service ${this._name} already has the ${endpoint.alias} endpoint defined.`)
+    }
+
+    let index = this.endpoints.push(new MapiEndpoint({...endpoint, endpoint: this._base + endpoint.endpoint})) - 1
+
+    this[endpoint.alias] = (data) => this.endpoints[index].call(data)
+  }
+
+  registerEndpoints (endpoints) {
+    if (!endpoints) {
+      throw new Error('MapiService.registerEndpoints is missing list of endpoints.')
+    }
+
+    if (!Array.isArray(endpoints)) {
+      throw new Error('MapiService.registerEndpoints can only handle arrays.')
+    }
+
+    for (const i in endpoints) {
+      this.registerEndpoint(endpoints[i])
     }
   }
 
