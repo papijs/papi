@@ -24,10 +24,6 @@ const MapiEndpoint = class {
       const regex = /:[a-zA-Z_?]+/gm
       let m
       while ((m = regex.exec(options.endpoint)) !== null) {
-        if (m.index === regex.lastIndex) {
-          regex.lastIndex++
-        }
-
         m.forEach((match, groupIndex) => {
           const param = {
             slug: match.slice(1, match.length),
