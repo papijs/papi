@@ -1,4 +1,5 @@
 import MapiService from './service'
+import axios from 'axios'
 
 const Mapi = class {
   constructor (args) {
@@ -14,6 +15,16 @@ const Mapi = class {
     if (args.services && Array.isArray(args.services)) {
       for (const service of args.services) {
         this.registerService(service)
+      }
+    }
+
+    if (args.headers && Array.isArray(args.headers)) {
+      for (const i in args.headers) {
+        if (args.headers.hasOwnProperty(i)) {
+          const header = args.headers[i]
+
+          axios.defaults.headers.common[header[0]] = header[1]
+        }
       }
     }
   }
