@@ -4,7 +4,7 @@ const MapiEndpoint = class {
   constructor (args) {
     const defaults = {
       method: 'GET',
-      endpoint: '',
+      endpoint: '/',
       hasParams: false,
       params: null,
       hasBody: false,
