@@ -2,7 +2,7 @@ const chai = require('chai')
 const expect = chai.expect
 const mapi = require('../dist/main')
 const http = require('http')
-const PORT = 4567
+const PORT = 4568
 const DEFAULT_BASE_URL = `http://localhost:${PORT}`
 
 let api;
@@ -118,6 +118,17 @@ describe('Endpoints', () => {
         expect(() => {
           api.base.registerEndpoints('string');
         }).to.throw('Service base tried to register endpoints but was given a(n) string instead.');
+        done();
+      });
+      it('Fails to create an endpoint if an unrecognized method is used', (done) => {
+
+        expect(() => {
+          api.base.registerEndpoint({
+            alias: 'bad',
+            method: 'BAD'
+          });
+        }).to.throw('Endpoint "bad" method BAD is not supported.');
+
         done();
       });
     });
@@ -385,7 +396,8 @@ describe('Endpoints', () => {
           hasParams: true
         });
         expect(() => {
-          api.base.endpoints[5].getEndpoint('test');
+          console.log(api.base.endpoints[5].params);
+          console.log(api.base.endpoints[5].getEndpoint('test'));
         }).to.throw('Endpoint "test" tried to create an endpoint uri but is missing parameters.');
 
         done();
@@ -407,9 +419,11 @@ describe('Endpoints', () => {
       it('Fails to create an axios call if an unrecognized method is used', (done) => {
         api.base.registerEndpoint({
           alias: 'bad',
-          method: 'BAD'
-        })
+          method: 'GET'
+        });
+
         expect(() => {
+          api.base.endpoints[5].method = 'BAD';
           api.base.bad();
         }).to.throw('Endpoint "bad" method BAD is not supported.');
 
