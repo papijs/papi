@@ -33,6 +33,9 @@ const Mapi = class {
     if (!args) {
       throw new Error('Missing service configuration.')
     }
+    if (typeof args === 'string') {
+      args = { name: args }
+    }
     if (!args.name) {
       throw new Error('Missing service name.')
     }
