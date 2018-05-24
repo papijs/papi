@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const MapiEndpoint = class {
+const PapiEndpoint = class {
   constructor (args) {
     const validMethods = ['GET', 'HEAD', 'POST', 'PUT', 'DELETE', 'CONNECT', 'OPTIONS', 'TRACE', 'PATCH']
     const defaults = {
@@ -164,4 +164,4 @@ const MapiEndpoint = class {
   }
 }
 
-export default MapiEndpoint
+export default PapiEndpoint

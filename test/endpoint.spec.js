@@ -1,6 +1,6 @@
 const chai = require('chai')
 const expect = chai.expect
-const mapi = require('../dist/main')
+const papi = require('../dist/main')
 const http = require('http')
 const PORT = 4568
 const DEFAULT_BASE_URL = `http://localhost:${PORT}`
@@ -10,7 +10,7 @@ let server;
 
 describe('Endpoints', () => {
     beforeEach(() => {
-        api = mapi({base: DEFAULT_BASE_URL});
+        api = papi({base: DEFAULT_BASE_URL});
 
         api.registerService({ name: 'base' });
 
