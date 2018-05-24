@@ -1,6 +1,6 @@
 const chai = require('chai')
 const expect = chai.expect
-const mapi = require('../dist/main')
+const papi = require('../dist/main')
 const http = require('http')
 const PORT = 4567
 const DEFAULT_BASE_URL = `http://localhost:${PORT}`
@@ -10,7 +10,7 @@ let server;
 
 describe('Core Functionality', () => {
     beforeEach(() => {
-        api = mapi({base: DEFAULT_BASE_URL});
+        api = papi({base: DEFAULT_BASE_URL});
     });
 
     describe('New instance', () => {
@@ -21,7 +21,7 @@ describe('Core Functionality', () => {
             done();
         });
         it('Creates a new instance with default headers in an array', (done) => {
-          api = mapi({
+          api = papi({
             base: DEFAULT_BASE_URL,
             headers: [
               ['header', 'value']
@@ -42,7 +42,7 @@ describe('Core Functionality', () => {
           });
         })
         it('Creates a new instance with services as objects', (done) => {
-            const apiWithServices = mapi({
+            const apiWithServices = papi({
                 base: 'mybase',
                 services: [
                     {
@@ -71,7 +71,7 @@ describe('Core Functionality', () => {
             done();
         });
         it('Creates a new instance with services as strings', (done) => {
-            const apiWithServices = mapi({
+            const apiWithServices = papi({
                 base: 'mybase',
                 services: [
                   'custom'
@@ -101,13 +101,13 @@ describe('Core Functionality', () => {
         // Failures
         it('Fails when called without arguments', (done) => {
             expect(() => {
-                const newApi = mapi();
+                const newApi = papi();
             }).to.throw('Missing API configuration.');
             done();
         });
         it('Fails when called without base', (done) => {
             expect(() => {
-                const newApi = mapi({});
+                const newApi = papi({});
             }).to.throw('Missing API Base URL.');
             done();
         });
@@ -117,7 +117,7 @@ describe('Core Functionality', () => {
 
 describe('Services', () => {
     beforeEach(() => {
-        api = mapi({base: DEFAULT_BASE_URL});
+        api = papi({base: DEFAULT_BASE_URL});
     });
 
     describe('Registration', () => {
@@ -399,7 +399,7 @@ describe('Services', () => {
 
 describe('Endpoints', () => {
     beforeEach(() => {
-        api = mapi({base: DEFAULT_BASE_URL});
+        api = papi({base: DEFAULT_BASE_URL});
 
         api.registerService({ name: 'base' });
     });

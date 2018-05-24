@@ -1,5 +1,5 @@
-import Mapi from './lib/mapi'
+import Papi from './lib/papi'
 
 export default (args) => {
-  return new Mapi(args)
+  return new Papi(args)
 }

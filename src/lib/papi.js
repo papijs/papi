@@ -1,7 +1,7 @@
-import MapiService from './service'
+import PapiService from './service'
 import axios from 'axios'
 
-const Mapi = class {
+const Papi = class {
   constructor (args) {
     if (!args) {
       throw new Error('Missing API configuration.')
@@ -53,7 +53,7 @@ const Mapi = class {
     options.base = this._base + options.base
 
     if (!this[options.name]) {
-      this[options.name] = new MapiService(options)
+      this[options.name] = new PapiService(options)
     } else {
       throw new Error(`Service ${options.name} is already registered.`)
     }
@@ -70,4 +70,4 @@ const Mapi = class {
   }
 }
 
-export default Mapi
+export default Papi

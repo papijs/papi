@@ -1,5 +1,6 @@
 # Changelog
-### 0.2.3-pre (May 24, 2018)
+### 0.3.0-pre (May 24, 2018)
+- **BREAKING** Rename to papi
 - Refactor `Mapi.registerService()` to not directly change `args`
 
 ### 0.2.2 (May 24, 2018)
