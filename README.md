@@ -1,7 +1,5 @@
 # mapi
-[![Build Status](https://travis-ci.org/andrewfarinella/mapi.svg?branch=master)](https://travis-ci.org/andrewfarinella/mapi)
-![Coveralls github branch](https://img.shields.io/coveralls/github/andrewfarinella/mapi/master.svg)
- [![npm version](https://badge.fury.io/js/%40andrewfarinella%2Fmapi.svg)](https://badge.fury.io/js/%40andrewfarinella%2Fmapi)
+[![Build Status](https://travis-ci.org/andrewfarinella/mapi.svg?branch=master)](https://travis-ci.org/andrewfarinella/mapi) [![Coveralls github branch](https://img.shields.io/coveralls/github/andrewfarinella/mapi/master.svg)](https://coveralls.io/github/andrewfarinella/mapi?branch=master) [![npm version](https://badge.fury.io/js/%40andrewfarinella%2Fmapi.svg)](https://badge.fury.io/js/%40andrewfarinella%2Fmapi)
 
 ---
 A simple RESTful API interface.
