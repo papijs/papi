@@ -20,6 +20,27 @@ describe('Core Functionality', () => {
             expect(api._base).to.equal(DEFAULT_BASE_URL);
             done();
         });
+        it('Creates a new instance with default headers in an array', (done) => {
+          api = mapi({
+            base: DEFAULT_BASE_URL,
+            headers: [
+              ['header', 'value']
+            ],
+            services: [
+              'base'
+            ]
+          });
+
+          server = http.createServer((req, res) => {
+            res.setHeader('Content-Type', 'application/json;charset=utf-8');
+            expect(req.headers['header']).to.equal('value');
+            res.end(); 
+          }).listen(PORT, () => {
+            api.base.get().then(response => {
+              done();
+            });
+          });
+        })
         it('Creates a new instance with services as objects', (done) => {
             const apiWithServices = mapi({
                 base: 'mybase',
@@ -53,7 +74,7 @@ describe('Core Functionality', () => {
             const apiWithServices = mapi({
                 base: 'mybase',
                 services: [
-                   'custom'
+                  'custom'
                 ]
             });
 
@@ -253,6 +274,10 @@ describe('Services', () => {
                 services: [
                     {
                         name: 'subservice'
+                    },
+                    {
+                        name: 'subservicewithbase',
+                        base: 'test'
                     }
                 ]
             });
@@ -260,6 +285,7 @@ describe('Services', () => {
             expect(api).to.haveOwnProperty('withsubservices');
 
             expect(api.withsubservices).to.haveOwnProperty('subservice');
+            expect(api.withsubservices.subservice._base).to.equal(`${DEFAULT_BASE_URL}/withsubservices/subservice`);
 
             expect(api.withsubservices.subservice).to.haveOwnProperty('get');
             expect(api.withsubservices.subservice.get).to.be.a('function');
@@ -272,6 +298,57 @@ describe('Services', () => {
 
             expect(api.withsubservices.subservice).to.haveOwnProperty('delete');
             expect(api.withsubservices.subservice.delete).to.be.a('function');
+
+            expect(api.withsubservices).to.haveOwnProperty('subservicewithbase');
+            expect(api.withsubservices.subservicewithbase._base).to.equal(`${DEFAULT_BASE_URL}/withsubservices/test`);
+
+            expect(api.withsubservices.subservicewithbase).to.haveOwnProperty('get');
+            expect(api.withsubservices.subservicewithbase.get).to.be.a('function');
+
+            expect(api.withsubservices.subservicewithbase).to.haveOwnProperty('create');
+            expect(api.withsubservices.subservicewithbase.create).to.be.a('function');
+
+            expect(api.withsubservices.subservicewithbase).to.haveOwnProperty('update');
+            expect(api.withsubservices.subservicewithbase.update).to.be.a('function');
+
+            expect(api.withsubservices.subservicewithbase).to.haveOwnProperty('delete');
+            expect(api.withsubservices.subservicewithbase.delete).to.be.a('function');
+
+            done();
+        });
+        it('Creates a new service with subservices with methods', (done) => {
+            api.registerService({
+                name: 'withsubservices',
+                services: [
+                    {
+                        name: 'subservice',
+                        methods: {
+                          all: () => { return true }
+                        }
+                    }
+                ]
+            });
+
+            expect(api).to.haveOwnProperty('withsubservices');
+
+            expect(api.withsubservices).to.haveOwnProperty('subservice');
+            expect(api.withsubservices.subservice._base).to.equal(`${DEFAULT_BASE_URL}/withsubservices/subservice`);
+
+            expect(api.withsubservices.subservice).to.haveOwnProperty('get');
+            expect(api.withsubservices.subservice.get).to.be.a('function');
+
+            expect(api.withsubservices.subservice).to.haveOwnProperty('create');
+            expect(api.withsubservices.subservice.create).to.be.a('function');
+
+            expect(api.withsubservices.subservice).to.haveOwnProperty('update');
+            expect(api.withsubservices.subservice.update).to.be.a('function');
+
+            expect(api.withsubservices.subservice).to.haveOwnProperty('delete');
+            expect(api.withsubservices.subservice.delete).to.be.a('function');
+
+            expect(api.withsubservices.subservice).to.haveOwnProperty('all');
+            expect(api.withsubservices.subservice.all).to.be.a('function');
+            expect(api.withsubservices.subservice.all()).to.equal(true);
 
             done();
         });
@@ -306,6 +383,17 @@ describe('Services', () => {
         });
 
         // Failures
+        it('Fails when creating a new service with bad incomplete subservice data', (done) => {
+          expect(() => {
+            api.registerService({
+              name: 'withsubservices',
+              services: [
+                {}
+              ]
+            })
+          }).to.throw('Cannot register service.');
+          done();
+        })
       });
 });
 
@@ -496,6 +584,7 @@ describe('Endpoints', () => {
       });
       it('Generates an endpoint that as optional parameters', (done) => {
         expect(api.base.endpoints[0].getEndpoint()).is.equal(`${DEFAULT_BASE_URL}/base/`);
+        expect(api.base.endpoints[0].getEndpoint({})).is.equal(`${DEFAULT_BASE_URL}/base/`);
 
         done();
       });
