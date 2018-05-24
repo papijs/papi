@@ -76,29 +76,29 @@ const MapiService = class {
 
   registerEndpoint (endpoint) {
     if (!endpoint) {
-      throw new Error('MapiService.registerEndpoint is missing endpoint information.')
+      throw new Error(`Service ${this._name} tried to register an endpoint but is missing arguments.`)
     }
 
     if (!endpoint.alias || endpoint.alias === '') {
-      throw new Error('MapiService.registerEndpoint requires an alias to set up a new endpoint.')
+      throw new Error(`Service ${this._name} tried to register an endpoint but is missing an alias.`)
     }
 
     if (typeof this[endpoint.alias] !== 'undefined') {
       throw new Error(`Service ${this._name} already has the ${endpoint.alias} endpoint defined.`)
     }
 
-    let index = this.endpoints.push(new MapiEndpoint({...endpoint, endpoint: this._base + endpoint.endpoint})) - 1
+    let index = this.endpoints.push(new MapiEndpoint({...endpoint, base: this._base})) - 1
 
-    this[endpoint.alias] = (data) => this.endpoints[index].call(data)
+    this[endpoint.alias] = (params, body) => this.endpoints[index].call(params, body)
   }
 
   registerEndpoints (endpoints) {
     if (!endpoints) {
-      throw new Error('MapiService.registerEndpoints is missing list of endpoints.')
+      throw new Error(`Service ${this._name} tried to register endpoints but is missing arguments.`)
     }
 
     if (!Array.isArray(endpoints)) {
-      throw new Error('MapiService.registerEndpoints can only handle arrays.')
+      throw new Error(`Service ${this._name} tried to register endpoints but was given a(n) ${typeof endpoints} instead.`)
     }
 
     for (const i in endpoints) {
