@@ -1,6 +1,10 @@
 # Changelog
-### 0.3.0-pre (May 24, 2018)
-- **BREAKING** Rename to papi
+### 0.3.0 (May 24, 2018)
+- **BREAKING** Change library name to papi
+- Add method validation to `PapiEndpoint.constructor()`
+- Change how `PapiEndpoint.hasParams` and `PapiEndpoint.params` are set in `PapiEndpoint.constructor()`
+- Change `if` statement in `MapiEndpoint.getEndpoint()` to a `switch` statement
+- Change file structure for tests
 - Refactor `Mapi.registerService()` to not directly change `args`
 
 ### 0.2.2 (May 24, 2018)

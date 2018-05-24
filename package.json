@@ -1,6 +1,6 @@
 {
   "name": "@papijs/papi",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "description": "A simple RESTful API interface",
   "main": "dist/main.js",
   "module": "dist/main.js",
