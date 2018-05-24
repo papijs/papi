@@ -40,9 +40,7 @@ const Mapi = class {
       throw new Error('Missing service name.')
     }
 
-    if (!args.name) {
-      args.name = args.base.replace(/[^a-z_]/gi, '')
-    } else if (!args.base) {
+    if (!args.base) {
       args.base = args.name
     }
 
