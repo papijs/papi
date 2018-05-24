@@ -1,4 +1,7 @@
 # Changelog
+### 0.2.2 (May 24, 2018)
+- Fix build test failing issue
+
 ### 0.2.1 (May 24, 2018)
 - Add minification to build process
 - Add `babel-plugin-istanbul` for more accurate coverage reporting
