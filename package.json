@@ -14,8 +14,9 @@
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w",
+    "publish": "npm publish --access=public",
     "test": "nyc mocha --exit && nyc report --reporter=text-lcov | coveralls && bundlesize",
-    "test:default": "npm run build && mocha --exit && bundlesize",
+    "test:default": "npm run build && nyc mocha --exit && bundlesize",
     "pretest": "npm run build"
   },
   "repository": {
