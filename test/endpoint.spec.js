@@ -206,8 +206,34 @@ describe('Endpoints', () => {
 
         done();
       });
-      it('Generates an endpoint that has required parameters and passed an object', (done) => {
-        expect(api.base.endpoints[0].getEndpoint({id: 3})).is.equal(`${DEFAULT_BASE_URL}/base/3`);
+      it('Generates an endpoint that has required parameters and passed an object of objects', (done) => {
+        api.base.registerEndpoint({
+          alias: 'first',
+          endpoint: '/:first/:second',
+          params: [
+            'first',
+            'second'
+          ]
+        });
+        expect(api.base.endpoints[5].getEndpoint({first: 3, second: 4})).is.equal(`${DEFAULT_BASE_URL}/base/3/4`);
+
+        api.base.registerEndpoint({
+          alias: 'second',
+          endpoint: '/:first/:second',
+          params: [
+            {
+              slug: 'first',
+              pattern: ':first',
+              required: true
+            },
+            {
+              slug: 'second',
+              pattern: ':second',
+              required: true
+            }
+          ]
+        });
+        expect(api.base.endpoints[6].getEndpoint({first: 3, second: 4})).is.equal(`${DEFAULT_BASE_URL}/base/3/4`);
 
         done();
       });
@@ -396,8 +422,7 @@ describe('Endpoints', () => {
           hasParams: true
         });
         expect(() => {
-          console.log(api.base.endpoints[5].params);
-          console.log(api.base.endpoints[5].getEndpoint('test'));
+          api.base.endpoints[5].getEndpoint('test');
         }).to.throw('Endpoint "test" tried to create an endpoint uri but is missing parameters.');
 
         done();
