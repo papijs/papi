@@ -1,4 +1,7 @@
 # Changelog
+### 0.2.3-pre (May 24, 2018)
+- Refactor `Mapi.registerService()` to not directly change `args`
+
 ### 0.2.2 (May 24, 2018)
 - Fix build test failing issue
 

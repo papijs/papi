@@ -33,37 +33,37 @@ const Mapi = class {
     if (!args) {
       throw new Error('Missing service configuration.')
     }
-    if (typeof args === 'string') {
-      args = { name: args }
-    }
-    if (!args.name) {
+
+    const options = (typeof args === 'string') ? { name: args } : args
+
+    if (!options.name) {
       throw new Error('Missing service name.')
     }
 
-    if (!args.base) {
-      args.base = args.name
+    if (!options.base) {
+      options.base = options.name
     }
 
-    if (!args.base.startsWith('/')) {
-      args.base = '/' + args.base
+    if (!options.base.startsWith('/')) {
+      options.base = '/' + options.base
     }
 
-    args.endpoints = args.endpoints || []
-    args.services = args.services || []
-    args.base = this._base + args.base
+    options.endpoints = options.endpoints || []
+    options.services = options.services || []
+    options.base = this._base + options.base
 
-    if (!this[args.name]) {
-      this[args.name] = new MapiService(args)
+    if (!this[options.name]) {
+      this[options.name] = new MapiService(options)
     } else {
-      throw new Error(`Service ${args.name} is already registered.`)
+      throw new Error(`Service ${options.name} is already registered.`)
     }
 
-    if (args.methods && typeof args.methods === 'object') {
-      for (const methodName in args.methods) {
-        if (args.methods.hasOwnProperty(methodName)) {
-          const method = args.methods[methodName]
+    if (options.methods && typeof options.methods === 'object') {
+      for (const methodName in options.methods) {
+        if (options.methods.hasOwnProperty(methodName)) {
+          const method = options.methods[methodName]
 
-          this[args.name][methodName] = method
+          this[options.name][methodName] = method
         }
       }
     }
