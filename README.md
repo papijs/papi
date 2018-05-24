@@ -1,5 +1,5 @@
 # ![papi](https://s3-us-west-2.amazonaws.com/s.cdpn.io/138442/papi.png) papi
-[![Build Status](https://travis-ci.org/andrewfarinella/papi.svg?branch=master)](https://travis-ci.org/andrewfarinella/papi) [![Coverage Status](https://coveralls.io/repos/github/andrewfarinella/papi/badge.svg?branch=master)](https://coveralls.io/github/andrewfarinella/papi?branch=master) [![npm version](https://badge.fury.io/js/%40andrewfarinella%2Fpapi.svg)](https://badge.fury.io/js/%40andrewfarinella%2Fpapi) [![dependencies Status](https://david-dm.org/andrewfarinella/papi/status.svg)](https://david-dm.org/andrewfarinella/papi)
+[![Build Status](https://travis-ci.org/papijs/papi.svg?branch=master)](https://travis-ci.org/papijs/papi) [![Coverage Status](https://coveralls.io/repos/github/papijs/papi/badge.svg?branch=master)](https://coveralls.io/github/papijs/papi?branch=master) [![npm version](https://badge.fury.io/js/%40papijs%2Fpapi.svg)](https://badge.fury.io/js/%40papijs%2Fpapi) [![dependencies Status](https://david-dm.org/papijs/papi/status.svg)](https://david-dm.org/papijs/papi)
 
 > A simple RESTful API interface.
 
@@ -9,18 +9,18 @@ Papi (pronounced `pap-e`) offers a easy-to-use way of interfacing with REST APIs
 
 NPM
 ```bash
-$ npm install @andrewfarinella/papi --save
+$ npm install @papijs/papi --save
 ```
 
 Yarn
 ```bash
-$ yarn add @andrewfarinella/papi
+$ yarn add @papijs/papi
 ```
 
 ## Example
 
 ```js
-import Papi from '@andrewfarinella/papi'
+import Papi from '@papijs/papi'
 
 const api = papi({
     base: 'http://localhost:8080',
@@ -40,11 +40,11 @@ api.posts.get(1)
 ### Import
 
 ```js
-import papi from '@andrewfarinella/papi'
+import papi from '@papijs/papi'
 
 // or
 
-papi = require('@andrewfarinella/papi')
+papi = require('@papijs/papi')
 ```
 
 ### papi setup
@@ -192,7 +192,7 @@ api.posts.getComments({
 ```
 
 ## Changelog
-Changes are documented in [each release](https://github.com/andrewfarinella/papi/releases).
+Changes are documented in [each release](https://github.com/papijs/papi/releases).
 
 ## License
 MIT
