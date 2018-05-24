@@ -2,7 +2,7 @@ const chai = require('chai')
 const expect = chai.expect
 const mapi = require('../dist/main')
 const http = require('http')
-const PORT = 4567
+const PORT = 4569
 const DEFAULT_BASE_URL = `http://localhost:${PORT}`
 
 let api;
