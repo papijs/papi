@@ -1,4 +1,14 @@
 # Changelog
+### 0.2.1 (May 24, 2018)
+- Add minification to build process
+- Add `babel-plugin-istanbul` for more accurate coverage reporting
+- Add npm script for generating HTML coverage reports
+- Add npm script for running bundlesize
+- Change bundlesize max size to 3kb
+- Remove unneccessary index check in `MapiEndpoint.getEndpoint()`
+- Remove unsed code from `Mapi.registerService()`
+- Update tests
+
 ### 0.2.0 (May 23, 2018)
 - **Breaking** Remove functionality to generate parameters even if `MapiEndpoint.hasParams` is set to false
 - **Breaking** Export factory instead of a class
