@@ -64,6 +64,13 @@ const api = papi({
     ]
 })
 ```
+
+You can also add new or update existing headers by using the `updateHeader` method on the core instance. It accepts two arguments, a 2-value array containing the header name and value, as well as what HTTP methods the header should apply to. If you want to have it applied to all methods, pass 'common' to the second arg or just leave it blank.
+
+```js
+api.updateHeader(['X-Header-Name', 'Header Value'], 'common')
+```
+
 ### Service setup
 Services can be registered either at setup or afterwards using the `papi.registerService()` method.
 
