@@ -11,6 +11,11 @@ let server;
 describe('Core Functionality', () => {
     beforeEach(() => {
         api = papi({base: DEFAULT_BASE_URL});
+
+        if (server) {
+          server.close();
+          server = null;
+        }
     });
 
     describe('New instance', () => {
@@ -113,4 +118,19 @@ describe('Core Functionality', () => {
         });
     });
 
+    describe('Functionality', () => {
+      it('Updates headers after being instantiated', (done) => {
+        api.registerService('base');
+        api.updateHeader(['header', 'value'], 'common');
+        server = http.createServer((req, res) => {
+          res.setHeader('Content-Type', 'application/json;charset=utf-8');
+          expect(req.headers['header']).to.equal('value');
+          res.end();
+        }).listen(PORT, () => {
+          api.base.get().then(response => {
+            done();
+          });
+        });
+      });
+    });
 });
