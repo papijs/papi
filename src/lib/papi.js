@@ -29,6 +29,12 @@ const Papi = class {
     }
   }
 
+  updateHeader (header, method) {
+    method = method || 'common'
+
+    axios.defaults.headers[method][header[0]] = header[1]
+  }
+
   registerService (args) {
     if (!args) {
       throw new Error('Missing service configuration.')
