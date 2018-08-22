@@ -20,7 +20,7 @@ $ yarn add @papijs/papi
 ## Example
 
 ```js
-import Papi from '@papijs/papi'
+import papi from '@papijs/papi'
 
 const api = papi({
     base: 'http://localhost:8080',
