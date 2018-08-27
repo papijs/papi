@@ -89,7 +89,7 @@ const PapiService = class {
 
     let index = this.endpoints.push(new PapiEndpoint({...endpoint, base: this._base})) - 1
 
-    this[endpoint.alias] = (params, body) => this.endpoints[index].call(params, body)
+    this[endpoint.alias] = (params, body, query) => this.endpoints[index].call(params, body, query)
   }
 
   registerEndpoints (endpoints) {

@@ -69,8 +69,10 @@ const PapiEndpoint = class {
     this.alias = options.alias
   }
 
-  buildRequestOptions () {
-    const options = {}
+  buildRequestOptions (params) {
+    const options = {
+      params
+    }
 
     if (this.requiresAuth) {
       // Check auth...
@@ -125,16 +127,16 @@ const PapiEndpoint = class {
   }
 
   call (...args) {
-    const options = this.buildRequestOptions()
-
-    const params = (this.hasParams) ? args[0] : null
-    const body = (this.hasBody) ? (this.hasParams) ? args[1] : args[0] : null
+    const params = (this.hasParams && args.length) ? args.shift() : null
+    const body = (this.hasBody && args.length) ? args.shift() : null
+    const query = args.length ? args.shift() : null
 
     if (this.hasBody && !body) {
       throw new Error(`Endpoint "${this.alias}" is expecting a request body but couldn't find any.`)
     }
 
     const endpoint = this.getEndpoint(params)
+    const options = this.buildRequestOptions(query)
 
     switch (this.method) {
       case 'GET':

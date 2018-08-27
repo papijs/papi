@@ -1,4 +1,8 @@
 # Changelog
+### 0.3.2 (August 27, 2018)
+- Added ability to pass queryParams as final argument when invoking endpoint
+- Added test for queryParams
+
 ### 0.3.1 (August 21, 2018)
 - Add `updateHeader` method to the papi core
 

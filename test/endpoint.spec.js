@@ -187,7 +187,7 @@ describe('Endpoints', () => {
       });
       it('Generates axios options', (done) => {
         expect(api.base.endpoints[0].buildRequestOptions()).to.be.a('object');
-        expect(Object.keys(api.base.endpoints[0].buildRequestOptions())).to.have.lengthOf(0);
+        expect(Object.keys(api.base.endpoints[0].buildRequestOptions())).to.have.lengthOf(1);
 
         done();
       });
@@ -263,14 +263,31 @@ describe('Endpoints', () => {
           res.setHeader('Content-Type', 'application/json;charset=utf-8');
           res.end();
         }).listen(PORT, () => {
-          api.base.get(1).then(response => {
-            expect(response.request.method).to.equal('GET');
-            expect(response.request.path).to.equal('/base/1');
+          api.base.get(1)
+            .then(response => {
+              expect(response.request.method).to.equal('GET');
+              expect(response.request.path).to.equal('/base/1');
 
-            expect(response).to.haveOwnProperty('status');
-            expect(response.status).to.equal(200);
-            done();
-          });
+              expect(response).to.haveOwnProperty('status');
+              expect(response.status).to.equal(200);
+              done();
+            });
+        });
+      });
+      it('Creates an axios get call with query params', (done) => {
+        server = http.createServer((req, res) => {
+          res.setHeader('Content-Type', 'application/json;charset=utf-8');
+          res.end();
+        }).listen(PORT, () => {
+          api.base.get(1, {active: true, orderBy: 'desc'})
+            .then(response => {
+              expect(response.request.method).to.equal('GET');
+              expect(response.request.path).to.equal('/base/1?active=true&orderBy=desc');
+
+              expect(response).to.haveOwnProperty('status');
+              expect(response.status).to.equal(200);
+              done();
+            });
         });
       });
       it('Creates an axios head call', (done) => {
