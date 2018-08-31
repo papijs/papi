@@ -1,4 +1,5 @@
 # ![papi](https://s3-us-west-2.amazonaws.com/s.cdpn.io/138442/papi.png) papi
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/19eb5ad19d924c2d98103c4a4b4b8645)](https://app.codacy.com/app/andrewfarinella/papi?utm_source=github.com&utm_medium=referral&utm_content=papijs/papi&utm_campaign=Badge_Grade_Dashboard)
 [![Build Status](https://travis-ci.org/papijs/papi.svg?branch=master)](https://travis-ci.org/papijs/papi) [![Coverage Status](https://coveralls.io/repos/github/papijs/papi/badge.svg?branch=master)](https://coveralls.io/github/papijs/papi?branch=master) [![npm version](https://badge.fury.io/js/%40papijs%2Fpapi.svg)](https://badge.fury.io/js/%40papijs%2Fpapi) [![dependencies Status](https://david-dm.org/papijs/papi/status.svg)](https://david-dm.org/papijs/papi)
 
 > A simple RESTful API interface.
