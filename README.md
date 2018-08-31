@@ -164,23 +164,51 @@ If no parameters are listed but `hasParams` is set to true and there is at least
 When making a call to a registered endpoint, the number of arguments expected depends on the `hasParams` and `hasBody` properties.
 ```js
 // hasParams === false && hasBody === false
-api.posts.get()
-  .then((response => {})).catch(err => {})
+api.posts.get() // without queryParam
+  .then(response => {})
+  .catch(err => {})
 
 // hasParams === true && hasBody === false
 api.posts.get(params)
-  .then((response => {})).catch(err => {})
+  .then(response => {})
+  .catch(err => {})
 
 // hasParams === false &&& hasBody === true
 api.posts.create(body)
-  .then((response => {})).catch(err => {})
+  .then(response => {})
+  .catch(err => {})
 
 // hasParams === true &&& hasBody === true
 api.posts.update(params, body)
-  .then((response => {})).catch(err => {})
+  .then(response => {})
+  .catch(err => {})
+
+/******************************************************/
+/****************** with queryParams ******************/
+
+// hasParams === false && hasBody === false
+api.posts.get(query) // without queryParam
+  .then(response => {})
+  .catch(err => {})
+
+// hasParams === true && hasBody === false
+api.posts.get(params, query)
+  .then(response => {})
+  .catch(err => {})
+
+// hasParams === false &&& hasBody === true
+api.posts.create(body, query)
+  .then(response => {})
+  .catch(err => {})
+
+// hasParams === true &&& hasBody === true
+api.posts.update(params, body, query)
+  .then(response => {})
+  .catch(err => {})
 ```
 
 Parameters can be passed to the call as either a string, integer, or an object.
+> NOTE: query are expected to be objects
 ```js
 // Endpoint has only one parameter, so we can pass it a string/integer
 
