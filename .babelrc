@@ -1,21 +1,29 @@
 {
-    "presets": [
-      [
-        "env", {
+  "presets": [
+    [
+      "@babel/preset-env",
+      {
         "targets": {
-          "node": "6.10"
-        },
-        "modules": false
+          "node": "10.13.0"
         }
-      ]
-    ],
-    "env": {
-      "test": {
-        "plugins": ["istanbul"]
       }
-    },
-    "plugins": [
-      "external-helpers",
-      "transform-object-rest-spread"
+    ],
+    "@babel/preset-typescript"
+  ],
+  "plugins": [
+    [
+      "@babel/plugin-proposal-object-rest-spread",
+      {
+        "useBuiltIns": true
+      }
+    ],
+    [
+      "module-resolver",
+      {
+        "alias": {
+          "@": "./"
+        }
+      }
     ]
-  }
+  ]
+}

@@ -29,10 +29,10 @@ const Papi = class {
     }
   }
 
-  updateHeader (header, method) {
+  updateHeader ([ key, value ], method) {
     method = method || 'common'
 
-    axios.defaults.headers[method][header[0]] = header[1]
+    axios.defaults.headers[method][key] = value
   }
 
   registerService (args) {

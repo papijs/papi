@@ -1,5 +1,5 @@
 import Papi from './lib/papi'
 
-export default (args) => {
+export default function (args) {
   return new Papi(args)
 }
