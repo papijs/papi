@@ -1,19 +1,30 @@
-import PapiEndpoint from './endpoint'
+import { PapiEndpoint } from './endpoint'
+import { EndpointArgs, EndpointConfig, ServiceConfig } from '@/@types'
 
-const PapiService = class {
-  constructor (args) {
-    const defaults = {
-      base: '/',
-      defaultEndpoints: true,
-      hasHealthCheck: true,
-      healthCheck: {
-        method: 'GET',
-        endpoint: '/health',
-        hasBody: false,
-        requiresAuth: false,
-        alias: 'health'
-      },
-      endpoints: [
+export class PapiService {
+  name: string;
+  base: string;
+  endpoints: PapiEndpoint[];
+  [key: string]: any;
+
+  constructor ({
+    name,
+    base = '/',
+    hasDefaultEndpoints = true,
+    hasHealthCheck = true,
+    healthCheck = {
+      method: 'GET',
+      endpoint: '/health',
+      hasBody: false,
+      requiresAuth: false,
+      alias: 'health'
+    },
+    endpoints = [],
+    services = []
+  }: ServiceConfig) {
+
+    if (hasDefaultEndpoints) {
+      this.registerEndpoints([
         {
           method: 'GET',
           endpoint: '/:id?',
@@ -46,67 +57,53 @@ const PapiService = class {
           requiresAuth: true,
           alias: 'delete'
         }
-      ],
-      services: []
+      ])
     }
 
-    const options = {
-      ...defaults,
-      ...args
-    }
-
-    if (options.defaultEndpoints) {
-      options.endpoints = [
-        ...defaults.endpoints,
-        ...args.endpoints
-      ]
-    }
-
-    this._name = options.name
-    this._base = options.base
+    this.name = name
+    this.base = base
     this.endpoints = []
 
-    this.registerEndpoints(options.endpoints)
-    this.registerSubServices(options.services)
+    this.registerEndpoints(endpoints)
+    this.registerSubServices(services)
 
-    if (options.hasHealthCheck) {
-      this.registerHealthCheckEndpoint(options.healthCheck)
+    if (hasHealthCheck) {
+      this.registerEndpoint(healthCheck)
+      // this.registerHealthCheckEndpoint(options.healthCheck)
     }
   }
 
-  registerEndpoint (endpoint) {
+  registerEndpoint (endpoint: EndpointConfig) {
     if (!endpoint) {
-      throw new Error(`Service ${this._name} tried to register an endpoint but is missing arguments.`)
+      throw new Error(`Service ${this.name} tried to register an endpoint but is missing arguments.`)
     }
 
     if (!endpoint.alias || endpoint.alias === '') {
-      throw new Error(`Service ${this._name} tried to register an endpoint but is missing an alias.`)
+      throw new Error(`Service ${this.name} tried to register an endpoint but is missing an alias.`)
     }
 
     if (typeof this[endpoint.alias] !== 'undefined') {
-      throw new Error(`Service ${this._name} already has the ${endpoint.alias} endpoint defined.`)
+      throw new Error(`Service ${this.name} already has the ${endpoint.alias} endpoint defined.`)
     }
 
-    let index = this.endpoints.push(new PapiEndpoint({...endpoint, base: this._base})) - 1
+    const index = this.endpoints.push(new PapiEndpoint({...endpoint, base: this.base})) - 1
 
-    this[endpoint.alias] = (params, body) => this.endpoints[index].call(params, body)
+    this[endpoint.alias] = (args: EndpointArgs) => this.endpoints[index].call(args)
   }
 
-  registerEndpoints (endpoints) {
+  registerEndpoints (endpoints: EndpointConfig[]) {
     if (!endpoints) {
-      throw new Error(`Service ${this._name} tried to register endpoints but is missing arguments.`)
+      throw new Error(`Service ${this.name} tried to register endpoints but is missing arguments.`)
     }
 
     if (!Array.isArray(endpoints)) {
-      throw new Error(`Service ${this._name} tried to register endpoints but was given a(n) ${typeof endpoints} instead.`)
+      throw new Error(`Service ${this.name} tried to register endpoints but was given a(n) ${typeof endpoints} instead.`)
     }
 
-    for (const i in endpoints) {
-      this.registerEndpoint(endpoints[i])
-    }
+    endpoints.forEach(this.registerEndpoint)
   }
 
-  registerSubServices (services) {
+  registerSubServices (services: ServiceConfig[]) {
     for (const i in services) {
       if (services.hasOwnProperty(i)) {
         const service = services[i]
@@ -126,7 +123,7 @@ const PapiService = class {
         service.endpoints = service.endpoints || []
         service.services = service.services || []
 
-        service.base = this._base + service.base
+        service.base = this.base + service.base
 
         this[service.name] = new PapiService(service)
 
@@ -142,10 +139,4 @@ const PapiService = class {
       }
     }
   }
-
-  registerHealthCheckEndpoint (healthCheck) {
-    this.registerEndpoints([healthCheck])
-  }
 }
-
-export default PapiService

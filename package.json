@@ -2,9 +2,9 @@
   "name": "@papijs/papi",
   "version": "0.4.0",
   "description": "A simple RESTful API interface",
-  "main": "dist/main.js",
-  "module": "dist/main.js",
-  "browser": "dist/main.js",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "browser": "dist/index.js",
   "bundlesize": [
     {
       "path": "./dist/main.js",

@@ -1,31 +1,7 @@
 import axios, { Method, AxiosPromise } from 'axios'
+import { EndpointArgs, EndpointParam, EndpointConfig, RequestParams } from '@/@types'
 
-type RequestParams = { [key: string]: string | number }
-
-interface EndpointParam {
-  slug: string;
-  pattern: string;
-  required: boolean;
-}
-
-interface EndpointConfig {
-  alias?: '';
-  base: string;
-  endpoint: string;
-  method?: Method;
-  hasBody?: boolean;
-  hasParams?: boolean;
-  params?: string[];
-  requiresAuth?: boolean;
-}
-
-interface EndpointCall {
-  body?: any;
-  params?: number | string | RequestParams;
-  query?: any;
-}
-
-class PapiEndpoint {
+export class PapiEndpoint {
   alias: string;
   endpoint: string;
   hasBody: boolean;
@@ -37,7 +13,7 @@ class PapiEndpoint {
   requiresAuth: boolean;
 
   constructor ({
-    base,
+    base = '/',
     method = 'GET',
     endpoint = '/',
     hasParams = false,
@@ -172,7 +148,7 @@ class PapiEndpoint {
     body,
     params = {},
     query
-  }: EndpointCall): AxiosPromise {
+  }: EndpointArgs): AxiosPromise {
     const options = this.buildRequestOptions()
 
     if (this.hasBody && !body) {
@@ -220,5 +196,3 @@ class PapiEndpoint {
     // }
   }
 }
-
-export default PapiEndpoint

@@ -1,6 +1,6 @@
 const chai = require('chai')
 const expect = chai.expect
-const papi = require('../dist/main')
+const papi  = require('../dist')
 const http = require('http')
 const PORT = 4567
 const DEFAULT_BASE_URL = `http://localhost:${PORT}`
@@ -10,6 +10,7 @@ let server;
 
 describe('Core Functionality', () => {
     beforeEach(() => {
+      console.log(papi)
         api = papi({base: DEFAULT_BASE_URL});
 
         if (server) {

@@ -1,46 +1,49 @@
-import PapiService from './service'
+import { Header, PapiConfig, ServiceConfig } from '@/@types'
+import { PapiService } from './service'
 import axios from 'axios'
 
-const Papi = class {
-  constructor (args) {
-    if (!args) {
-      throw new Error('Missing API configuration.')
+export class Papi {
+  base!: string;
+  [key: string]: any;
+
+  constructor ({
+    base,
+    headers = [],
+    services = []
+  }: PapiConfig) {
+    // if (!args) {
+    //   throw new Error('Missing API configuration.')
+    // }
+
+    // FIXME: I don't think this is necessary any longer
+    // if (!base) {
+    //   throw new Error('Missing API Base URL.')
+    // }
+    this.base = base
+
+    for (const service of services) {
+      this.registerService(service)
     }
 
-    if (!args.base) {
-      throw new Error('Missing API Base URL.')
-    }
-    this._base = args.base
+    for (const i in headers) {
+      if (headers.hasOwnProperty(i)) {
+        const header = headers[i]
 
-    if (args.services && Array.isArray(args.services)) {
-      for (const service of args.services) {
-        this.registerService(service)
-      }
-    }
-
-    if (args.headers && Array.isArray(args.headers)) {
-      for (const i in args.headers) {
-        if (args.headers.hasOwnProperty(i)) {
-          const header = args.headers[i]
-
-          axios.defaults.headers.common[header[0]] = header[1]
-        }
+        this.updateHeader(header)
       }
     }
   }
 
-  updateHeader ([ key, value ], method) {
-    method = method || 'common'
-
+  updateHeader ([ key, value ]: Header, method: string = 'common') {
     axios.defaults.headers[method][key] = value
   }
 
-  registerService (args) {
-    if (!args) {
+  registerService (service: ServiceConfig | string) {
+    if (!service) {
       throw new Error('Missing service configuration.')
     }
 
-    const options = (typeof args === 'string') ? { name: args } : args
+    const options: ServiceConfig = (typeof service === 'string') ? { name: service } : service
 
     if (!options.name) {
       throw new Error('Missing service name.')
@@ -75,5 +78,3 @@ const Papi = class {
     }
   }
 }
-
-export default Papi
