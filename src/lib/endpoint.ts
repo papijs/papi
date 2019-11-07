@@ -1,6 +1,17 @@
 import axios, { Method, AxiosPromise } from 'axios'
 import { EndpointArgs, EndpointParam, EndpointConfig, RequestParams } from '@/@types'
 
+// FIXME: I'd rather use the provided type
+const VALID_METHODS = [
+  'GET',
+  'DELETE',
+  'HEAD',
+  'OPTIONS',
+  'POST',
+  'PUT',
+  'PATCH'
+]
+
 export class PapiEndpoint {
   alias: string;
   endpoint: string;
@@ -33,9 +44,9 @@ export class PapiEndpoint {
     //   alias: ''
     // }
 
-    // if (VALID_METHODS.includes(options.method.toUpperCase())) {
-    //   throw new Error(`Endpoint "${options.alias}" method ${options.method} is not supported.`)
-    // }
+    if (!VALID_METHODS.includes(method.toUpperCase())) {
+      throw new Error(`Endpoint "${alias}" method ${method} is not supported.`)
+    }
 
     const _params = new Set<EndpointParam>();
 
@@ -148,7 +159,7 @@ export class PapiEndpoint {
     body,
     params = {},
     query
-  }: EndpointArgs): AxiosPromise {
+  }: EndpointArgs = {}): AxiosPromise {
     const options = this.buildRequestOptions()
 
     if (this.hasBody && !body) {

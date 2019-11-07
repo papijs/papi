@@ -1,6 +1,6 @@
 const chai = require('chai')
 const expect = chai.expect
-const papi = require('../dist')
+const papi = require('../dist').default
 const http = require('http')
 const PORT = 4568
 const DEFAULT_BASE_URL = `http://localhost:${PORT}`

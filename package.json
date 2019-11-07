@@ -85,13 +85,13 @@
     "sequelize-test-helpers": "^1.1.2",
     "sinon": "^4.5.0",
     "supertest": "^3.1.0",
-    "ts-jest": "^24.0.2",
-    "ts-loader": "^6.0.4",
+    "ts-jest": "^24.1.0",
+    "ts-loader": "^6.2.1",
     "ts-mocha": "^6.0.0",
-    "typescript": "^3.5.3",
-    "webpack": "^4.27.1",
-    "webpack-cli": "^3.1.2",
-    "webpack-merge": "^4.1.4",
+    "typescript": "^3.6.4",
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.10",
+    "webpack-merge": "^4.2.2",
     "webpack-node-externals": "^1.7.2"
   }
 }

@@ -1,6 +1,6 @@
 const chai = require('chai')
 const expect = chai.expect
-const papi  = require('../dist')
+const papi  = require('../dist').default
 const http = require('http')
 const PORT = 4567
 const DEFAULT_BASE_URL = `http://localhost:${PORT}`
@@ -10,7 +10,6 @@ let server;
 
 describe('Core Functionality', () => {
     beforeEach(() => {
-      console.log(papi)
         api = papi({base: DEFAULT_BASE_URL});
 
         if (server) {
@@ -33,7 +32,7 @@ describe('Core Functionality', () => {
               ['header', 'value']
             ],
             services: [
-              'base'
+              'root'
             ]
           });
 
@@ -42,7 +41,7 @@ describe('Core Functionality', () => {
             expect(req.headers['header']).to.equal('value');
             res.end(); 
           }).listen(PORT, () => {
-            api.base.get().then(response => {
+            api.root.get().then(response => {
               done();
             });
           });
@@ -108,7 +107,7 @@ describe('Core Functionality', () => {
         it('Fails when called without arguments', (done) => {
             expect(() => {
                 const newApi = papi();
-            }).to.throw('Missing API configuration.');
+            }).to.throw('Missing API Base URL.');
             done();
         });
         it('Fails when called without base', (done) => {

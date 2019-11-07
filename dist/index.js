@@ -1,3 +1,4 @@
+module.exports =
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -117,23 +118,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const service_1 = __webpack_require__(3);
 const axios_1 = __importDefault(__webpack_require__(0));
 class Papi {
-    constructor({ base, headers = [], services = [] }) {
+    constructor({ base, headers = [], services = [] } = { base: '' }) {
         // if (!args) {
         //   throw new Error('Missing API configuration.')
         // }
-        // FIXME: I don't think this is necessary any longer
-        // if (!base) {
-        //   throw new Error('Missing API Base URL.')
-        // }
-        this.base = base;
+        if (!base || !base.length) {
+            throw new Error('Missing API Base URL.');
+        }
+        this._base = base;
+        for (const header of headers) {
+            this.updateHeader(header);
+        }
         for (const service of services) {
             this.registerService(service);
-        }
-        for (const i in headers) {
-            if (headers.hasOwnProperty(i)) {
-                const header = headers[i];
-                this.updateHeader(header);
-            }
         }
     }
     updateHeader([key, value], method = 'common') {
@@ -153,8 +150,6 @@ class Papi {
         if (!options.base.startsWith('/')) {
             options.base = '/' + options.base;
         }
-        options.endpoints = options.endpoints || [];
-        options.services = options.services || [];
         options.base = this._base + options.base;
         if (!this[options.name]) {
             this[options.name] = new service_1.PapiService(options);
@@ -191,6 +186,9 @@ class PapiService {
         requiresAuth: false,
         alias: 'health'
     }, endpoints = [], services = [] }) {
+        this.name = name;
+        this._base = base;
+        this.endpoints = [];
         if (hasDefaultEndpoints) {
             this.registerEndpoints([
                 {
@@ -227,9 +225,6 @@ class PapiService {
                 }
             ]);
         }
-        this.name = name;
-        this.base = base;
-        this.endpoints = [];
         this.registerEndpoints(endpoints);
         this.registerSubServices(services);
         if (hasHealthCheck) {
@@ -244,10 +239,11 @@ class PapiService {
         if (!endpoint.alias || endpoint.alias === '') {
             throw new Error(`Service ${this.name} tried to register an endpoint but is missing an alias.`);
         }
-        if (typeof this[endpoint.alias] !== 'undefined') {
+        // if (typeof this[endpoint.alias] !== 'undefined') {
+        if (this.hasOwnProperty(endpoint.alias)) {
             throw new Error(`Service ${this.name} already has the ${endpoint.alias} endpoint defined.`);
         }
-        const index = this.endpoints.push(new endpoint_1.PapiEndpoint(Object.assign(Object.assign({}, endpoint), { base: this.base }))) - 1;
+        const index = this.endpoints.push(new endpoint_1.PapiEndpoint(Object.assign(Object.assign({}, endpoint), { base: this._base }))) - 1;
         this[endpoint.alias] = (args) => this.endpoints[index].call(args);
     }
     registerEndpoints(endpoints) {
@@ -257,7 +253,9 @@ class PapiService {
         if (!Array.isArray(endpoints)) {
             throw new Error(`Service ${this.name} tried to register endpoints but was given a(n) ${typeof endpoints} instead.`);
         }
-        endpoints.forEach(this.registerEndpoint);
+        for (const endpoint of endpoints) {
+            this.registerEndpoint(endpoint);
+        }
     }
     registerSubServices(services) {
         for (const i in services) {
@@ -274,7 +272,7 @@ class PapiService {
                 }
                 service.endpoints = service.endpoints || [];
                 service.services = service.services || [];
-                service.base = this.base + service.base;
+                service.base = this._base + service.base;
                 this[service.name] = new PapiService(service);
                 if (service.methods && typeof service.methods === 'object') {
                     for (const methodName in service.methods) {
@@ -302,6 +300,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const axios_1 = __importDefault(__webpack_require__(0));
+// FIXME: I'd rather use the provided type
+const VALID_METHODS = [
+    'GET',
+    'DELETE',
+    'HEAD',
+    'OPTIONS',
+    'POST',
+    'PUT',
+    'PATCH'
+];
 class PapiEndpoint {
     constructor({ base = '/', method = 'GET', endpoint = '/', hasParams = false, params = [], hasBody = false, requiresAuth = false, alias = '' }) {
         // const DEFAULTS: EndpointConfig = {
@@ -313,9 +321,9 @@ class PapiEndpoint {
         //   requiresAuth: false,
         //   alias: ''
         // }
-        // if (VALID_METHODS.includes(options.method.toUpperCase())) {
-        //   throw new Error(`Endpoint "${options.alias}" method ${options.method} is not supported.`)
-        // }
+        if (!VALID_METHODS.includes(method.toUpperCase())) {
+            throw new Error(`Endpoint "${alias}" method ${method} is not supported.`);
+        }
         const _params = new Set();
         // First: Handle User Provided Params
         if (params.length > 0) {
@@ -409,7 +417,7 @@ class PapiEndpoint {
                 throw new Error(`Endpoint "${this.alias}" tried to create an endpoint uri but can't understand the data it was passed.`);
         }
     }
-    call({ body, params = {}, query }) {
+    call({ body, params = {}, query } = {}) {
         const options = this.buildRequestOptions();
         if (this.hasBody && !body) {
             throw new Error(`Endpoint "${this.alias}" is expecting a request body but couldn't find any.`);

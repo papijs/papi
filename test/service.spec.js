@@ -1,6 +1,6 @@
 const chai = require('chai')
 const expect = chai.expect
-const papi = require('../dist')
+const papi = require('../dist').default
 const http = require('http')
 const PORT = 4569
 const DEFAULT_BASE_URL = `http://localhost:${PORT}`
@@ -123,7 +123,7 @@ describe('Services', () => {
         it('Creates a new service with only custom endpoints', (done) => {
             api.registerService({
                 name: 'withonlycustomendpoints',
-                defaultEndpoints: false,
+                hasDefaultEndpoints: false,
                 endpoints: [
                     {
                         'alias': 'custom'

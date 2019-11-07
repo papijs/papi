@@ -22,6 +22,9 @@ export class PapiService {
     endpoints = [],
     services = []
   }: ServiceConfig) {
+    this.name = name
+    this._base = base
+    this.endpoints = []
 
     if (hasDefaultEndpoints) {
       this.registerEndpoints([
@@ -60,10 +63,6 @@ export class PapiService {
       ])
     }
 
-    this.name = name
-    this.base = base
-    this.endpoints = []
-
     this.registerEndpoints(endpoints)
     this.registerSubServices(services)
 
@@ -82,11 +81,12 @@ export class PapiService {
       throw new Error(`Service ${this.name} tried to register an endpoint but is missing an alias.`)
     }
 
-    if (typeof this[endpoint.alias] !== 'undefined') {
+    // if (typeof this[endpoint.alias] !== 'undefined') {
+    if (this.hasOwnProperty(endpoint.alias)) {
       throw new Error(`Service ${this.name} already has the ${endpoint.alias} endpoint defined.`)
     }
 
-    const index = this.endpoints.push(new PapiEndpoint({...endpoint, base: this.base})) - 1
+    const index = this.endpoints.push(new PapiEndpoint({...endpoint, base: this._base})) - 1
 
     this[endpoint.alias] = (args: EndpointArgs) => this.endpoints[index].call(args)
   }
@@ -100,7 +100,9 @@ export class PapiService {
       throw new Error(`Service ${this.name} tried to register endpoints but was given a(n) ${typeof endpoints} instead.`)
     }
 
-    endpoints.forEach(this.registerEndpoint)
+    for (const endpoint of endpoints) {
+      this.registerEndpoint(endpoint)
+    }
   }
 
   registerSubServices (services: ServiceConfig[]) {
@@ -123,7 +125,7 @@ export class PapiService {
         service.endpoints = service.endpoints || []
         service.services = service.services || []
 
-        service.base = this.base + service.base
+        service.base = this._base + service.base
 
         this[service.name] = new PapiService(service)
 

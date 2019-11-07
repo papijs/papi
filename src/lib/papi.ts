@@ -3,34 +3,30 @@ import { PapiService } from './service'
 import axios from 'axios'
 
 export class Papi {
-  base!: string;
+  base: string;
   [key: string]: any;
 
   constructor ({
     base,
     headers = [],
     services = []
-  }: PapiConfig) {
+  }: PapiConfig = { base: '' }) {
     // if (!args) {
     //   throw new Error('Missing API configuration.')
     // }
 
-    // FIXME: I don't think this is necessary any longer
-    // if (!base) {
-    //   throw new Error('Missing API Base URL.')
-    // }
-    this.base = base
+    if (!base || !base.length) {
+      throw new Error('Missing API Base URL.')
+    }
+
+    this._base = base
+
+    for (const header of headers) {
+      this.updateHeader(header)
+    }
 
     for (const service of services) {
       this.registerService(service)
-    }
-
-    for (const i in headers) {
-      if (headers.hasOwnProperty(i)) {
-        const header = headers[i]
-
-        this.updateHeader(header)
-      }
     }
   }
 
@@ -57,8 +53,6 @@ export class Papi {
       options.base = '/' + options.base
     }
 
-    options.endpoints = options.endpoints || []
-    options.services = options.services || []
     options.base = this._base + options.base
 
     if (!this[options.name]) {
