@@ -1,5 +1,6 @@
 import axios, { Method, AxiosPromise } from 'axios'
 import { EndpointArgs, EndpointParam, EndpointConfig, RequestParams } from '@/@types'
+import { SlowBuffer } from 'buffer';
 
 // FIXME: I'd rather use the provided type
 const VALID_METHODS = [
@@ -52,17 +53,17 @@ export class PapiEndpoint {
 
     // First: Handle User Provided Params
     if (params.length > 0) {
+      // Assumes given params are either complete objects or
       // Auto bulid param objects based on a string-only array
       // e.g. args.params = ['id', 'start-date', 'end-date']
       for (const slug of params) {
-        const pattern = ':' + slug
-        const required = true
-
-        _params.add({
+        const param = (typeof slug === 'object') ? slug : {
           slug,
-          pattern,
-          required
-        })
+          pattern: ':' + slug,
+          required: true
+        }
+
+        _params.add(param)
       }
     } else { // Second: Attempt to auto handle params
       // Params were not passed, but we will attempt to parse unless told in arguments they don't exist
@@ -155,14 +156,15 @@ export class PapiEndpoint {
     }
   }
 
-  call ({
-    body,
-    params = {},
-    query
-  }: EndpointArgs = {}): AxiosPromise {
+  call (req?: EndpointArgs | number | string, argData?: any): AxiosPromise {
+    const { data: reqData = null, params = {}, query = null } = (typeof req === 'object') ? req : { params: req }
+
     const options = this.buildRequestOptions()
 
-    if (this.hasBody && !body) {
+    // Coalesce the body to use for the request
+    const data = reqData || argData
+
+    if (this.hasBody && !data) {
       throw new Error(`Endpoint "${this.alias}" is expecting a request body but couldn't find any.`)
     }
 
@@ -172,38 +174,13 @@ export class PapiEndpoint {
       return axios.request({
         url,
         method: this.method,
-        ...(this.hasBody && { body }),
+        ...(this.hasBody && { data }),
         ...(query && { params: query })
       })
     } catch (error) {
       console.error(error)
-      throw new Error(`Endpoint "${this.alias}" method ${this.method} is not supported.`)
+      throw new Error(error)
+      // throw new Error(`Endpoint "${this.alias}" method ${this.method} is not supported.`)
     }
-
-    // switch (this.method) {
-    //   case 'GET':
-    //     return axios.get(endpoint, options)
-
-    //   case 'DELETE':
-    //     return axios.delete(endpoint, options)
-
-    //   case 'HEAD':
-    //     return axios.head(endpoint, options)
-
-    //   case 'OPTIONS':
-    //     return axios.options(endpoint, options)
-
-    //   case 'POST':
-    //     return axios.post(endpoint, body, options)
-
-    //   case 'PUT':
-    //     return axios.put(endpoint, body, options)
-
-    //   case 'PATCH':
-    //     return axios.patch(endpoint, body, options)
-
-    //   default:
-    //     throw new Error(`Endpoint "${this.alias}" method ${this.method} is not supported.`)
-    // }
   }
 }

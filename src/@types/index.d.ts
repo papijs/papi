@@ -6,7 +6,7 @@ export type Header = [ string, string ]
 export type ServiceMethods = { [key: string]: Function }
 
 export interface EndpointConfig {
-  alias?: string;
+  alias: string;
   base?: string;
   endpoint: string;
   method?: Method;
@@ -40,7 +40,7 @@ export interface EndpointParam {
 }
 
 export interface EndpointArgs {
-  body?: any;
+  data?: any;
   params?: number | string | RequestParams;
   query?: any;
 }

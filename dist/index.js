@@ -244,7 +244,7 @@ class PapiService {
             throw new Error(`Service ${this.name} already has the ${endpoint.alias} endpoint defined.`);
         }
         const index = this.endpoints.push(new endpoint_1.PapiEndpoint(Object.assign(Object.assign({}, endpoint), { base: this._base }))) - 1;
-        this[endpoint.alias] = (args) => this.endpoints[index].call(args);
+        this[endpoint.alias] = (...args) => this.endpoints[index].call(...args);
     }
     registerEndpoints(endpoints) {
         if (!endpoints) {
@@ -327,16 +327,16 @@ class PapiEndpoint {
         const _params = new Set();
         // First: Handle User Provided Params
         if (params.length > 0) {
+            // Assumes given params are either complete objects or
             // Auto bulid param objects based on a string-only array
             // e.g. args.params = ['id', 'start-date', 'end-date']
             for (const slug of params) {
-                const pattern = ':' + slug;
-                const required = true;
-                _params.add({
+                const param = (typeof slug === 'object') ? slug : {
                     slug,
-                    pattern,
-                    required
-                });
+                    pattern: ':' + slug,
+                    required: true
+                };
+                _params.add(param);
             }
         }
         else { // Second: Attempt to auto handle params
@@ -417,37 +417,23 @@ class PapiEndpoint {
                 throw new Error(`Endpoint "${this.alias}" tried to create an endpoint uri but can't understand the data it was passed.`);
         }
     }
-    call({ body, params = {}, query } = {}) {
+    call(req, argData) {
+        const { data: reqData = null, params = {}, query = null } = (typeof req === 'object') ? req : { params: req };
         const options = this.buildRequestOptions();
-        if (this.hasBody && !body) {
+        // Coalesce the body to use for the request
+        const data = reqData || argData;
+        if (this.hasBody && !data) {
             throw new Error(`Endpoint "${this.alias}" is expecting a request body but couldn't find any.`);
         }
         const url = this.getEndpoint(params);
         try {
-            return axios_1.default.request(Object.assign(Object.assign({ url, method: this.method }, (this.hasBody && { body })), (query && { params: query })));
+            return axios_1.default.request(Object.assign(Object.assign({ url, method: this.method }, (this.hasBody && { data })), (query && { params: query })));
         }
         catch (error) {
             console.error(error);
-            throw new Error(`Endpoint "${this.alias}" method ${this.method} is not supported.`);
+            throw new Error(error);
+            // throw new Error(`Endpoint "${this.alias}" method ${this.method} is not supported.`)
         }
-        // switch (this.method) {
-        //   case 'GET':
-        //     return axios.get(endpoint, options)
-        //   case 'DELETE':
-        //     return axios.delete(endpoint, options)
-        //   case 'HEAD':
-        //     return axios.head(endpoint, options)
-        //   case 'OPTIONS':
-        //     return axios.options(endpoint, options)
-        //   case 'POST':
-        //     return axios.post(endpoint, body, options)
-        //   case 'PUT':
-        //     return axios.put(endpoint, body, options)
-        //   case 'PATCH':
-        //     return axios.patch(endpoint, body, options)
-        //   default:
-        //     throw new Error(`Endpoint "${this.alias}" method ${this.method} is not supported.`)
-        // }
     }
 }
 exports.PapiEndpoint = PapiEndpoint;

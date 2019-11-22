@@ -88,7 +88,7 @@ export class PapiService {
 
     const index = this.endpoints.push(new PapiEndpoint({...endpoint, base: this._base})) - 1
 
-    this[endpoint.alias] = (args: EndpointArgs) => this.endpoints[index].call(args)
+    this[endpoint.alias] = (...args: any[]) => this.endpoints[index].call(...args)
   }
 
   registerEndpoints (endpoints: EndpointConfig[]) {

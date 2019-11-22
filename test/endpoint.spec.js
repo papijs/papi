@@ -238,8 +238,8 @@ describe('Endpoints', () => {
         done();
       });
       it('Generates an endpoint that as optional parameters', (done) => {
-        expect(api.base.endpoints[0].getEndpoint()).is.equal(`${DEFAULT_BASE_URL}/base/`);
-        expect(api.base.endpoints[0].getEndpoint({})).is.equal(`${DEFAULT_BASE_URL}/base/`);
+        expect(api.base.endpoints[1].getEndpoint()).is.equal(`${DEFAULT_BASE_URL}/base/`);
+        expect(api.base.endpoints[1].getEndpoint({})).is.equal(`${DEFAULT_BASE_URL}/base/`);
 
         done();
       });
@@ -323,14 +323,13 @@ describe('Endpoints', () => {
         server = http.createServer((req, res) => {
           res.setHeader('Content-Type', 'application/json;charset=utf-8');
           let body = [];
-          req.on('data', (chunk) => {
-            body.push(chunk);
-          }).on('end', () => {
-            body = Buffer.concat(body).toString();
-
-            expect(body).to.equal('test');
-            res.end();
-          });
+          req
+            .on('data', chunk => body.push(chunk))
+            .on('end', () => {
+              body = Buffer.concat(body).toString();
+              expect(body).to.equal('test');
+              res.end();
+            });
         }).listen(PORT, () => {
           api.base.patch(1, 'test').then(response => {
             expect(response.request.method).to.equal('PATCH');
@@ -355,7 +354,7 @@ describe('Endpoints', () => {
             res.end();
           });
         }).listen(PORT, () => {
-          api.base.create('test').then(response => {
+          api.base.create({ data: 'test' }).then(response => {
             expect(response.request.method).to.equal('POST');
             expect(response.request.path).to.equal('/base/');
 
@@ -438,19 +437,6 @@ describe('Endpoints', () => {
         expect(() => {
           api.base.create();
         }).to.throw('Endpoint "create" is expecting a request body but couldn\'t find any.');
-
-        done();
-      });
-      it('Fails to create an axios call if an unrecognized method is used', (done) => {
-        api.base.registerEndpoint({
-          alias: 'bad',
-          method: 'GET'
-        });
-
-        expect(() => {
-          api.base.endpoints[5].method = 'BAD';
-          api.base.bad();
-        }).to.throw('Endpoint "bad" method BAD is not supported.');
 
         done();
       });
